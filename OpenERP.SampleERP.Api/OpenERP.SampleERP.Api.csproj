@@ -31,10 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Configs\appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Include="Configs\appsettings.global.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configs\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
