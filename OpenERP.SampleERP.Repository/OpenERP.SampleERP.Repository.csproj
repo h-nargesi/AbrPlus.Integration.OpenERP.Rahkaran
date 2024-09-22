@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AbrPlus.Integration.OpenERP.Hosting" Version="1.0.2" />
-    <PackageReference Include="SeptaKit.Repository.EFCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="AbrPlus.Integration.OpenERP.Hosting" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>
