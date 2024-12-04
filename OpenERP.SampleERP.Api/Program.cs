@@ -4,7 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SeptaKit.Extensions;
+using SeptaKit.Hosting.AspNetCore;
+using SeptaKit.Hosting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
@@ -17,8 +20,15 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Api
             CreateHostBuilder(args).Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            AppHostBuilder.CreateHostBuilder<Startup>(args, GetHttpPort, GetHttpsPort, GetCert);
+        public static IHostBuilder CreateHostBuilder(string[] args) => AspNetCoreHostBuilder.CreateHostBuilder<Startup>(args, options =>
+        {
+            options.Platform = RuntimePlatform.Windows;
+            options.GetHttpPort = GetHttpPort;
+            options.GetHttpsPort = GetHttpsPort;
+            options.GetCertificate = GetCertificate;
+            options.GetAppConfigSettings = GetAppConfigSettings<Program>;
+            options.HostingMode = RuntimeHostingMode.Kestrel;
+        });
 
         public static int GetHttpPort(IServiceProvider serviceProvider)
         {
@@ -34,19 +44,40 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Api
             return port;
         }
 
-        public static X509Certificate2 GetCert(IServiceProvider serviceProvider)
+        public static X509Certificate2 GetCertificate(IServiceProvider serviceProvider)
         {
             var configuration = serviceProvider.GetService<IConfiguration>();
-
-            var subject = configuration.GetValue<string>($"AuthorityCert");
-            if (subject.HasValue())
+            var authorityCert = configuration.GetValue<string>($"AuthorityCert");
+            if (authorityCert.HasValue())
             {
-                return CertificateLoader.LoadFromStoreCert(subject, StoreName.Root.ToString(), StoreLocation.CurrentUser, false);
+                return CertificateLoader.LoadFromStoreCert(authorityCert, StoreName.Root.ToString(), StoreLocation.LocalMachine, false);
             }
             else
             {
-                return new X509Certificate2(Path.Combine(AppHostBuilder.GetAppLocation(), "Certs", "localhost.pfx"), "13");
+                var env = serviceProvider.GetService<IHostEnvironment>();
+                return new X509Certificate2(Path.Combine(env.ContentRootPath, Path.Combine("Certs", "localhost.pfx")), "13");
             }
+        }
+
+        public static List<AppConfigSetting> GetAppConfigSettings<T>()
+        {
+            var basePath = AppContext.BaseDirectory;
+
+            List<AppConfigSetting> appConfigSettings = new List<AppConfigSetting>() {
+                new AppConfigSetting
+                {
+                    Path=Path.Combine(basePath, "Configs", "appsettings.global.json"),
+                    Optional=false,
+                    ReloadOnChange=true
+                },
+                new AppConfigSetting
+                {
+                    Path=Path.Combine(basePath, "Configs", "appsettings.json"),
+                    Optional=false,
+                    ReloadOnChange=true
+                }
+            };
+            return appConfigSettings;
         }
     }
 }
