@@ -1,12 +1,8 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration;
 using AbrPlus.Integration.OpenERP.Service;
-using AbrPlus.Integration.OpenERP.Service.Configuration;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using SeptaKit.Repository;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Options
 {
