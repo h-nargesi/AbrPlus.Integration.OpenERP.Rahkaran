@@ -14,8 +14,10 @@ abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOption> opt
 
     private const string AuthenticationServiceRelativeAddress = "/Services/Framework/AuthenticationService.svc";
     protected readonly string AuthenticationServiceAddress = options.Value.BaseUrl + AuthenticationServiceRelativeAddress;
+    protected readonly string Username { get; } = options.Value.Username;
+    protected readonly string Password { get; } = options.Value.Password;
 
-    public abstract Task<string> Login(string username, string password);
+    public abstract Task<string> Login();
 
     public async Task Logout(string sessionId)
     {

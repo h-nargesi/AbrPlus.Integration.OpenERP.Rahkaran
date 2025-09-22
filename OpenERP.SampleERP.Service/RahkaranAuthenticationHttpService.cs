@@ -16,7 +16,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationHttpService> logger) : 
     RahkaranAuthenticationBaseService(options, logger)
 {
-    public override async Task<string> Login(string username, string password)
+    public override async Task<string> Login()
     {
         using var session_response = await client.GetAsync($"{AuthenticationServiceAddress}/session");
         session_response.EnsureSuccessStatusCode();
@@ -30,12 +30,12 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
         var rsa = new RSACryptoServiceProvider(1024);
         rsa.ImportParameters(new RSAParameters { Exponent = e, Modulus = m });
 
-        var sessionPlusPassword = session.Id + "**" + password;
+        var sessionPlusPassword = session.Id + "**" + Password;
 
         var data = new
         {
             sessionId = session.Id,
-            username,
+            username = Username,
             password = BytesToHexString(rsa.Encrypt(Encoding.Default.GetBytes(sessionPlusPassword), false)),
         };
 

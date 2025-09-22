@@ -403,4 +403,5 @@ App_Data/
 project.lock.json
 project.assets.json
 
-
+# Ignore Rider
+/.idea/

@@ -13,12 +13,12 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationSslService> logger) : 
     RahkaranAuthenticationBaseService(options, logger)
 {
-    public override async Task<string> Login(string username, string password)
+    public override async Task<string> Login()
     {
         var data = new
         {
-            username,
-            password,
+            username = Username,
+            password = Password,
         };
 
         var content = new StringContent(
