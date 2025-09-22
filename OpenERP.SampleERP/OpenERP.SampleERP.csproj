@@ -1,24 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>AbrPlus.Integration.$(MSBuildProjectName)</AssemblyName>
-    <RootNamespace>AbrPlus.Integration.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>AbrPlus.Integration.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>AbrPlus.Integration.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Entries\**" />
-    <EmbeddedResource Remove="Entries\**" />
-    <None Remove="Entries\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Entries\**" />
+		<EmbeddedResource Remove="Entries\**" />
+		<None Remove="Entries\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AbrPlus.Integration.OpenERP" Version="1.0.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AbrPlus.Integration.OpenERP" Version="1.0.7" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="QueryModels\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Extensions\" />
+		<Folder Include="QueryModels\" />
+	</ItemGroup>
 
 </Project>
