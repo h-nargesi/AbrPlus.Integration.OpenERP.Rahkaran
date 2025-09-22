@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 
-abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationBaseService> logger) : 
-    IRahkaranAuthenticationServrice
+internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationBaseService> logger) : 
+    IRahkaranAuthenticationService
 {
-    protected readonly HttpClient client = new();
-    protected readonly ILogger<RahkaranAuthenticationBaseService> logger = logger;
+    protected readonly HttpClient Client = new();
+    protected readonly ILogger<RahkaranAuthenticationBaseService> Logger = logger;
 
     private const string AuthenticationServiceRelativeAddress = "/Services/Framework/AuthenticationService.svc";
     protected readonly string AuthenticationServiceAddress = options.Value.BaseUrl + AuthenticationServiceRelativeAddress;
-    protected readonly string Username { get; } = options.Value.Username;
-    protected readonly string Password { get; } = options.Value.Password;
+    protected readonly string Username = options.Value.Username;
+    protected readonly string Password = options.Value.Password;
 
     public abstract Task<string> Login();
 
     public async Task Logout(string sessionId)
     {
-        using var session_response = await client.GetAsync($"{AuthenticationServiceAddress}/session?sessionId={sessionId}");
-        session_response.EnsureSuccessStatusCode();
+        using var sessionResponse = await Client.GetAsync($"{AuthenticationServiceAddress}/session?sessionId={sessionId}");
+        sessionResponse.EnsureSuccessStatusCode();
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+﻿using System;
+
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 
 public interface IRahkaranCurrentUserService
 {
-    public string GetSessionId();
+    public IDisposable GetSessionId();
 }

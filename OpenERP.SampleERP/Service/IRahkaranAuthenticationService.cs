@@ -2,7 +2,7 @@
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 
-public interface IRahkaranAuthenticationServrice
+public interface IRahkaranAuthenticationService
 {
     public Task<string> Login();
 

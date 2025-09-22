@@ -26,14 +26,17 @@ internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlOption> opti
             Encoding.UTF8,
             MediaTypeNames.Application.Json);
 
-        using var response = await client.PostAsync($"{AuthenticationServiceAddress}/ssllogin", content);
+        using var response = await Client.PostAsync($"{AuthenticationServiceAddress}/ssllogin", content);
         response.EnsureSuccessStatusCode();
 
-        if (!response.Headers.TryGetValues("Set-Cookie", out var textCookie) || textCookie is null)
+        if (!response.Headers.TryGetValues("Set-Cookie", out var textCookie))
         {
-            throw new Exception("The 'Set-Cookie' not found in login response.");
+            textCookie = [];
         }
-
-        return string.Join(",", textCookie);
+        
+        var sessionCookie = string.Join(",", textCookie);
+        
+        return string.IsNullOrEmpty(sessionCookie) ? 
+            throw new Exception("The 'Set-Cookie' not found in login response.") : sessionCookie;
     }
 }

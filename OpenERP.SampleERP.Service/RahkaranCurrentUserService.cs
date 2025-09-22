@@ -1,31 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 
 internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger<RahkaranCurrentUserService> logger) : 
     IRahkaranCurrentUserService
 {
-    private readonly TimeSpan idleTimeout = TimeSpan.FromSeconds(5);
-    private readonly IServiceScopeFactory services = services;
-    private readonly object @lock = new();
-    private readonly HashSet<Session> calls = new();
-    private string currentSessionId;
-    private CancellationTokenSource logoutCts;
+    private readonly TimeSpan _idleTimeout = TimeSpan.FromSeconds(5);
+    private readonly IServiceScopeFactory _services = services;
+    private readonly object _lock = new();
+    private readonly HashSet<Session> _calls = [];
+    private string _currentSessionId;
+    private CancellationTokenSource _logoutCts;
 
     public IDisposable GetSessionId()
     {
         Session session;
 
-        lock (@lock)
+        lock (_lock)
         {
-            if (currentSessionId == null)
+            if (_currentSessionId == null)
             {
-                currentSessionId = DoLoginAsync().GetAwaiter().GetResult();
-                logger.LogInformation("Logged in. SessionId: {sessionId}", currentSessionId);
+                _currentSessionId = DoLoginAsync().GetAwaiter().GetResult();
+                logger.LogInformation("Logged in. SessionId: {sessionId}", _currentSessionId);
             }
 
-            logoutCts?.Cancel();
-            logoutCts = null;
+            _logoutCts?.Cancel();
+            _logoutCts = null;
 
-            calls.Add(session = new Session(currentSessionId));
+            _calls.Add(session = new Session(_currentSessionId, this));
         }
 
         return session;
@@ -33,28 +40,28 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
     
     private Task<string> DoLoginAsync()
     {
-        using var scope = services.CreateScope();
+        using var scope = _services.CreateScope();
         var auth = scope.ServiceProvider.GetRequiredService<IRahkaranAuthenticationService>();
         return auth.Login();
     }
 
     private Task DoLogoutAsync(string sessionId)
     {
-        using var scope = scopeFactory.CreateScope();
+        using var scope = _services.CreateScope();
         var auth = scope.ServiceProvider.GetRequiredService<IRahkaranAuthenticationService>();
         return auth.Logout(sessionId);
     }
 
     private void ReleaseSession(Session session)
     {
-        lock (@lock)
+        lock (_lock)
         {
-            calls.Remove(session);
+            _calls.Remove(session);
 
-            if (calls.Count <= 0)
+            if (_calls.Count <= 0)
             {
-                logoutCts = new CancellationTokenSource();
-                _ = ScheduleLogoutAsync(currentSessionId, logoutCts.Token);
+                _logoutCts = new CancellationTokenSource();
+                _ = ScheduleLogoutAsync(_currentSessionId, _logoutCts.Token);
             }
         }
     }
@@ -63,13 +70,13 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
     {
         try
         {
-            await Task.Delay(idleTimeout, token);
+            await Task.Delay(_idleTimeout, token);
 
-            lock (@lock)
+            lock (_lock)
             {
-                if (calls.Count <= 0)
+                if (_calls.Count <= 0)
                 {
-                    currentSessionId = null;
+                    _currentSessionId = null;
                 }
             }
 
@@ -83,13 +90,13 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
         }
     }
 
-    class Session(string id, RahkaranCurrentUserService owener) : IDisposable
+    private class Session(string id, RahkaranCurrentUserService owner) : IDisposable
     {
         public string Id { get; } = id;
 
         public void Dispose()
         {
-            owener.ReleaseSession(this);
+            owner.ReleaseSession(this);
         }
     }
 }

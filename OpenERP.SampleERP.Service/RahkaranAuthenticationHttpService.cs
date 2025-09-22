@@ -18,14 +18,12 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
 {
     public override async Task<string> Login()
     {
-        using var session_response = await client.GetAsync($"{AuthenticationServiceAddress}/session");
-        session_response.EnsureSuccessStatusCode();
+        using var sessionResponse = await Client.GetAsync($"{AuthenticationServiceAddress}/session");
+        sessionResponse.EnsureSuccessStatusCode();
+        var session = JsonConvert.DeserializeObject<AuthenticationSession>(await sessionResponse.Content.ReadAsStringAsync());
 
-        var session = JsonConvert.DeserializeObject<AuthenticationSession>(await session_response.Content.ReadAsStringAsync());
-        session_response.Dispose();
-
-        var m = HexStringToBytes(session.RSA.M);
-        var e = HexStringToBytes(session.RSA.E);
+        var m = HexStringToBytes(session.Rsa.M);
+        var e = HexStringToBytes(session.Rsa.E);
 
         var rsa = new RSACryptoServiceProvider(1024);
         rsa.ImportParameters(new RSAParameters { Exponent = e, Modulus = m });
@@ -44,15 +42,18 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
             Encoding.UTF8,
             MediaTypeNames.Application.Json);
 
-        using var login_response = await client.PostAsync($"{AuthenticationServiceAddress}/login", content);
-        login_response.EnsureSuccessStatusCode();
+        using var loginResponse = await Client.PostAsync($"{AuthenticationServiceAddress}/login", content);
+        loginResponse.EnsureSuccessStatusCode();
 
-        if (!login_response.Headers.TryGetValues("Set-Cookie", out var textCookie) || textCookie is null)
+        if (!loginResponse.Headers.TryGetValues("Set-Cookie", out var textCookie))
         {
-            throw new Exception("The 'Set-Cookie' not found in login response.");
+            textCookie = [];
         }
-
-        return string.Join(",", textCookie);
+        
+        var sessionCookie = string.Join(",", textCookie);
+        
+        return string.IsNullOrEmpty(sessionCookie) ? 
+            throw new Exception("The 'Set-Cookie' not found in login response.") : sessionCookie;
     }
 
     private static byte[] HexStringToBytes(string hex)
@@ -76,13 +77,13 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
         return result;
     }
 
-    private static string BytesToHexString(byte[] input)
+    private static string BytesToHexString(byte[] bytes)
     {
         var hexString = new StringBuilder(64);
 
-        for (int i = 0; i < input.Length; i++)
+        foreach (var b in bytes)
         {
-            hexString.Append(string.Format("{0:X2}", input[i]));
+            hexString.Append($"{b:X2}");
         }
 
         return hexString.ToString();
@@ -92,9 +93,9 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
     {
         public string Id { get; set; }
 
-        public RSAPublicParameters RSA { get; set; }
+        public RsaPublicParameters Rsa { get; set; }
 
-        public partial class RSAPublicParameters
+        public class RsaPublicParameters
         {
             public string M { get; set; }
 
