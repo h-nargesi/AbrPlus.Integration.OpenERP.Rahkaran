@@ -1,4 +1,4 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,13 +13,20 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
-internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationHttpService> logger) : 
+internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILogger<RahkaranAuthenticationHttpService> logger) : 
     RahkaranAuthenticationBaseService(options, logger)
 {
     public override async Task<string> Login()
     {
+        var baseUrl = Options.BaseUrl;
+        if (baseUrl.EndsWith('/')) baseUrl = baseUrl[..^1];
+
+        var basePath = Options.BasePath.Authentication;
+        if (basePath.StartsWith('/')) basePath = basePath[1..];
+        if (basePath.EndsWith('/')) basePath = basePath[..^1];
+
         using var client = new HttpClient();
-        using var sessionResponse = await client.GetAsync($"{AuthenticationServiceAddress}/session");
+        using var sessionResponse = await client.GetAsync($"{baseUrl}/{basePath}/session");
         sessionResponse.EnsureSuccessStatusCode();
         var session = JsonConvert.DeserializeObject<AuthenticationSession>(await sessionResponse.Content.ReadAsStringAsync());
 
@@ -29,12 +36,12 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
         var rsa = new RSACryptoServiceProvider(1024);
         rsa.ImportParameters(new RSAParameters { Exponent = e, Modulus = m });
 
-        var sessionPlusPassword = session.Id + "**" + Password;
+        var sessionPlusPassword = session.Id + "**" + Options.Password;
 
         var data = new
         {
             sessionId = session.Id,
-            username = Username,
+            username = Options.Username,
             password = BytesToHexString(rsa.Encrypt(Encoding.Default.GetBytes(sessionPlusPassword), false)),
         };
 
@@ -43,7 +50,7 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
             Encoding.UTF8,
             MediaTypeNames.Application.Json);
 
-        using var loginResponse = await client.PostAsync($"{AuthenticationServiceAddress}/login", content);
+        using var loginResponse = await client.PostAsync($"{baseUrl}/{basePath}/login", content);
         loginResponse.EnsureSuccessStatusCode();
 
         if (!loginResponse.Headers.TryGetValues("Set-Cookie", out var textCookie))

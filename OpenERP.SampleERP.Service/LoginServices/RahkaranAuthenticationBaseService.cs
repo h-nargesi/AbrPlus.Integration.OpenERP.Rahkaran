@@ -1,4 +1,4 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
@@ -6,22 +6,25 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
-internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationBaseService> logger) : 
+internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlInfo> options, ILogger<RahkaranAuthenticationBaseService> logger) : 
     IRahkaranAuthenticationService
 {
     protected readonly ILogger<RahkaranAuthenticationBaseService> Logger = logger;
-
-    private const string AuthenticationServiceRelativeAddress = "/Services/Framework/AuthenticationService.svc";
-    protected readonly string AuthenticationServiceAddress = options.Value.BaseUrl + AuthenticationServiceRelativeAddress;
-    protected readonly string Username = options.Value.Username;
-    protected readonly string Password = options.Value.Password;
+    protected readonly RahkaranUrlInfo Options = options.Value;
 
     public abstract Task<string> Login();
 
     public async Task Logout(string sessionId)
     {
+        var baseUrl = Options.BaseUrl;
+        if (baseUrl.EndsWith('/')) baseUrl = baseUrl[..^1];
+
+        var basePath = Options.BasePath.Authentication;
+        if (basePath.StartsWith('/')) basePath = basePath[1..];
+        if (basePath.EndsWith('/')) basePath = basePath[..^1];
+
         using var client = new HttpClient();
-        using var sessionResponse = await client.GetAsync($"{AuthenticationServiceAddress}/session?sessionId={sessionId}");
+        using var sessionResponse = await client.GetAsync($"{baseUrl}/{basePath}/logout?sessionId={sessionId}");
         sessionResponse.EnsureSuccessStatusCode();
     }
 }

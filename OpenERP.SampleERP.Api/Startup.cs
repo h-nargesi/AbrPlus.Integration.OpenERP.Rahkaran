@@ -28,6 +28,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Api
         {
             services.GeneralConfigure(Configuration);
 
+            services.Configure<RahkaranUrlInfo>(x => Configuration.GetSection("Rahkaran").Bind(x));
             services.Configure<SampleErpOption>(x => Configuration.GetSection("App").Bind(x));
         }
 
