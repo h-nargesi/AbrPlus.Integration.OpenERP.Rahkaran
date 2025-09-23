@@ -5,17 +5,14 @@ using SeptaKit.DI;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Api.Api
 {
-    public class InvoiceApi : IInvoiceApi, IApi
+    public class InvoiceApi(IInvoiceService invoiceService, IRahkaranSessionService sessionService) : IInvoiceApi, IApi
     {
-        private readonly IInvoiceService _invoiceService;
-
-        public InvoiceApi(IInvoiceService invoiceService)
-        {
-            _invoiceService = invoiceService;
-        }
+        private readonly IInvoiceService _invoiceService = invoiceService;
+        private readonly IRahkaranSessionService _sessionService = sessionService;
 
         public string[] GetAllIds(int? companyId)
         {
+            using var session = _sessionService.GetSession();
             return _invoiceService.GetAllIds();
         }
         public InvoiceBundle GetBundle(string key, int? companyId)

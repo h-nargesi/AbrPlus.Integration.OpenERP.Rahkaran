@@ -1,23 +1,22 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
-internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger<RahkaranCurrentUserService> logger) : 
-    IRahkaranCurrentUserService
+internal class RahkaranSessionService(IRahkaranAuthenticationService authService, ILogger<RahkaranSessionService> logger) : 
+    IRahkaranSessionService
 {
-    private readonly TimeSpan _idleTimeout = TimeSpan.FromSeconds(5);
-    private readonly IServiceScopeFactory _services = services;
+    private readonly TimeSpan _idleTimeout = TimeSpan.FromSeconds(60);
+    private readonly IRahkaranAuthenticationService _authService = authService;
     private readonly object _lock = new();
     private readonly HashSet<Session> _calls = [];
     private string _currentSessionId;
     private CancellationTokenSource _logoutCts;
 
-    public IDisposable GetSessionId()
+    public IDisposable GetSession()
     {
         Session session;
 
@@ -25,7 +24,7 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
         {
             if (_currentSessionId == null)
             {
-                _currentSessionId = DoLoginAsync().GetAwaiter().GetResult();
+                _currentSessionId = _authService.Login().GetAwaiter().GetResult();
                 logger.LogInformation("Logged in. SessionId: {sessionId}", _currentSessionId);
             }
 
@@ -38,20 +37,6 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
         return session;
     }
     
-    private Task<string> DoLoginAsync()
-    {
-        using var scope = _services.CreateScope();
-        var auth = scope.ServiceProvider.GetRequiredService<IRahkaranAuthenticationService>();
-        return auth.Login();
-    }
-
-    private Task DoLogoutAsync(string sessionId)
-    {
-        using var scope = _services.CreateScope();
-        var auth = scope.ServiceProvider.GetRequiredService<IRahkaranAuthenticationService>();
-        return auth.Logout(sessionId);
-    }
-
     private void ReleaseSession(Session session)
     {
         lock (_lock)
@@ -80,7 +65,7 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
                 }
             }
 
-            await DoLogoutAsync(sessionId);
+            await _authService.Logout(sessionId);
             logger.LogInformation("Logged out. SessionId: {sessionId}", sessionId);
         }
         catch (TaskCanceledException) { }
@@ -90,7 +75,7 @@ internal class RahkaranCurrentUserService(IServiceScopeFactory services, ILogger
         }
     }
 
-    private class Session(string id, RahkaranCurrentUserService owner) : IDisposable
+    private class Session(string id, RahkaranSessionService owner) : IDisposable
     {
         public string Id { get; } = id;
 

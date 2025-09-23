@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>AbrPlus.Integration.$(MSBuildProjectName)</AssemblyName>
-    <RootNamespace>AbrPlus.Integration.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>AbrPlus.Integration.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>AbrPlus.Integration.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AbrPlus.Integration.OpenERP.Hosting" Version="1.0.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AbrPlus.Integration.OpenERP.Hosting" Version="1.0.7" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OpenERP.SampleERP\OpenERP.SampleERP.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\OpenERP.SampleERP\OpenERP.SampleERP.csproj" />
+	</ItemGroup>
 
 </Project>

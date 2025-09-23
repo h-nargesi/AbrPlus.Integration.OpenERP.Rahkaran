@@ -11,14 +11,15 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
 internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationHttpService> logger) : 
     RahkaranAuthenticationBaseService(options, logger)
 {
     public override async Task<string> Login()
     {
-        using var sessionResponse = await Client.GetAsync($"{AuthenticationServiceAddress}/session");
+        using var client = new HttpClient();
+        using var sessionResponse = await client.GetAsync($"{AuthenticationServiceAddress}/session");
         sessionResponse.EnsureSuccessStatusCode();
         var session = JsonConvert.DeserializeObject<AuthenticationSession>(await sessionResponse.Content.ReadAsStringAsync());
 
@@ -42,7 +43,7 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlOption> opt
             Encoding.UTF8,
             MediaTypeNames.Application.Json);
 
-        using var loginResponse = await Client.PostAsync($"{AuthenticationServiceAddress}/login", content);
+        using var loginResponse = await client.PostAsync($"{AuthenticationServiceAddress}/login", content);
         loginResponse.EnsureSuccessStatusCode();
 
         if (!loginResponse.Headers.TryGetValues("Set-Cookie", out var textCookie))

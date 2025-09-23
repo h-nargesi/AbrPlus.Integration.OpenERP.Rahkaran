@@ -1,17 +1,17 @@
-﻿using Autofac;
+﻿using AbrPlus.Integration.OpenERP.DI;
+using AbrPlus.Integration.OpenERP.Hosting.DI;
+using AbrPlus.Integration.OpenERP.Hosting.Hosting;
+using AbrPlus.Integration.OpenERP.SampleERP.Api.DI;
+using AbrPlus.Integration.OpenERP.SampleERP.Options;
+using AbrPlus.Integration.OpenERP.SampleERP.Repository.DI;
+using AbrPlus.Integration.OpenERP.SampleERP.Service.DI;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SeptaKit.DI;
 using System.Linq;
-using AbrPlus.Integration.OpenERP.SampleERP.Options;
-using AbrPlus.Integration.OpenERP.SampleERP.Repository.DI;
-using AbrPlus.Integration.OpenERP.SampleERP.Service.DI;
-using AbrPlus.Integration.OpenERP.SampleERP.Api.DI;
-using AbrPlus.Integration.OpenERP.Hosting.DI;
-using AbrPlus.Integration.OpenERP.Hosting.Hosting;
-using AbrPlus.Integration.OpenERP.DI;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Api
 {
@@ -33,10 +33,12 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Api
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            var baseUrl = Configuration.GetValue<string>("RahkaranUrlOption:BaseUrl");
+
             builder.RegisterModule<InfrastructureDIModule>();
             builder.RegisterModule<ExtendedDIModule>();
             builder.RegisterModule<RepositoryDIModule>();
-            builder.RegisterModule<ServiceDIModule>();
+            builder.RegisterModule(new ServiceDIModule(baseUrl?.StartsWith("https") ?? false));
             builder.RegisterModule<ApiDIModule>();
         }
 
@@ -57,8 +59,5 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Api
                 }
             });
         }
-
-
     }
-
 }

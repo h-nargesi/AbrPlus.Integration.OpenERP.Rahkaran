@@ -4,12 +4,11 @@ using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
 internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationBaseService> logger) : 
     IRahkaranAuthenticationService
 {
-    protected readonly HttpClient Client = new();
     protected readonly ILogger<RahkaranAuthenticationBaseService> Logger = logger;
 
     private const string AuthenticationServiceRelativeAddress = "/Services/Framework/AuthenticationService.svc";
@@ -21,7 +20,8 @@ internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlOp
 
     public async Task Logout(string sessionId)
     {
-        using var sessionResponse = await Client.GetAsync($"{AuthenticationServiceAddress}/session?sessionId={sessionId}");
+        using var client = new HttpClient();
+        using var sessionResponse = await client.GetAsync($"{AuthenticationServiceAddress}/session?sessionId={sessionId}");
         sessionResponse.EnsureSuccessStatusCode();
     }
 }

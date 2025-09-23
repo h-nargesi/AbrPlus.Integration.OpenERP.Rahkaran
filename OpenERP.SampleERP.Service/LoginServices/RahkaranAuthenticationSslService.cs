@@ -8,7 +8,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
 internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlOption> options, ILogger<RahkaranAuthenticationSslService> logger) : 
     RahkaranAuthenticationBaseService(options, logger)
@@ -26,7 +26,8 @@ internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlOption> opti
             Encoding.UTF8,
             MediaTypeNames.Application.Json);
 
-        using var response = await Client.PostAsync($"{AuthenticationServiceAddress}/ssllogin", content);
+        using var client = new HttpClient();
+        using var response = await client.PostAsync($"{AuthenticationServiceAddress}/ssllogin", content);
         response.EnsureSuccessStatusCode();
 
         if (!response.Headers.TryGetValues("Set-Cookie", out var textCookie))
