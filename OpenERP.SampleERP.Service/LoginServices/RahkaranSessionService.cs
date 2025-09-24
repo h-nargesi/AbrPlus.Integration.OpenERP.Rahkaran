@@ -1,3 +1,4 @@
+using AbrPlus.Integration.OpenERP.SampleERP.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ internal class RahkaranSessionService(IRahkaranAuthenticationService authService
     private readonly IRahkaranAuthenticationService _authService = authService;
     private readonly object _lock = new();
     private readonly HashSet<Session> _calls = [];
-    private string _currentSessionId;
+    private SessionInfo _currentSessionInfo;
     private CancellationTokenSource _logoutCts;
 
     public IDisposable GetSession()
@@ -22,16 +23,16 @@ internal class RahkaranSessionService(IRahkaranAuthenticationService authService
 
         lock (_lock)
         {
-            if (_currentSessionId == null)
+            if (_currentSessionInfo == null)
             {
-                _currentSessionId = _authService.Login().GetAwaiter().GetResult();
-                logger.LogInformation("Logged in. SessionId: {sessionId}", _currentSessionId);
+                _currentSessionInfo = _authService.Login().GetAwaiter().GetResult();
+                logger.LogInformation("Logged in. SessionId: {sessionId}", _currentSessionInfo.Id);
             }
 
             _logoutCts?.Cancel();
             _logoutCts = null;
 
-            _calls.Add(session = new Session(_currentSessionId, this));
+            _calls.Add(session = new Session(_currentSessionInfo, this));
         }
 
         return session;
@@ -46,7 +47,7 @@ internal class RahkaranSessionService(IRahkaranAuthenticationService authService
             if (_calls.Count <= 0)
             {
                 _logoutCts = new CancellationTokenSource();
-                _ = ScheduleLogoutAsync(_currentSessionId, _logoutCts.Token);
+                _ = ScheduleLogoutAsync(_currentSessionInfo.Id, _logoutCts.Token);
             }
         }
     }
@@ -61,7 +62,7 @@ internal class RahkaranSessionService(IRahkaranAuthenticationService authService
             {
                 if (_calls.Count <= 0)
                 {
-                    _currentSessionId = null;
+                    _currentSessionInfo = null;
                 }
             }
 
@@ -75,9 +76,13 @@ internal class RahkaranSessionService(IRahkaranAuthenticationService authService
         }
     }
 
-    private class Session(string id, RahkaranSessionService owner) : IDisposable
+    private class Session(SessionInfo sessionInfo, RahkaranSessionService owner) : IDisposable
     {
-        public string Id { get; } = id;
+        private readonly SessionInfo _sessionInfo = sessionInfo;
+
+        public string Id => _sessionInfo.Id;
+
+        public string Coockie => _sessionInfo.Coockie;
 
         public void Dispose()
         {

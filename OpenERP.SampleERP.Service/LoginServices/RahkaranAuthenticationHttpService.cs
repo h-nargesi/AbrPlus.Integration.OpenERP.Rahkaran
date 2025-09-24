@@ -1,10 +1,12 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
+using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Security.Cryptography;
@@ -13,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
 
-internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILogger<RahkaranAuthenticationHttpService> logger) : 
+internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILogger<RahkaranAuthenticationHttpService> logger) :
     RahkaranAuthenticationBaseService(options, logger)
 {
-    public override async Task<string> Login()
+    public override async Task<SessionInfo> Login()
     {
         var baseUrl = Options.BaseUrl;
         if (baseUrl.EndsWith('/')) baseUrl = baseUrl[..^1];
@@ -57,11 +59,21 @@ internal class RahkaranAuthenticationHttpService(IOptions<RahkaranUrlInfo> optio
         {
             textCookie = [];
         }
-        
+
         var sessionCookie = string.Join(",", textCookie);
-        
-        return string.IsNullOrEmpty(sessionCookie) ? 
-            throw new Exception("The 'Set-Cookie' not found in login response.") : sessionCookie;
+
+        if (string.IsNullOrEmpty(sessionCookie))
+            throw new Exception("The 'Set-Cookie' not found in login response.");
+
+        var cookie = sessionCookie.Split(',', ';')
+            .GroupBy(c => c.Trim().Split('=')[0], StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(k => k.Key, v => v.First());
+
+        return new SessionInfo
+        {
+            Id = session.Id,
+            Coockie = string.Join(';', cookie.Values),
+        };
     }
 
     private static byte[] HexStringToBytes(string hex)

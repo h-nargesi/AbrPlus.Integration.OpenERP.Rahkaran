@@ -1,4 +1,5 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
+using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
@@ -12,7 +13,7 @@ internal abstract class RahkaranAuthenticationBaseService(IOptions<RahkaranUrlIn
     protected readonly ILogger<RahkaranAuthenticationBaseService> Logger = logger;
     protected readonly RahkaranUrlInfo Options = options.Value;
 
-    public abstract Task<string> Login();
+    public abstract Task<SessionInfo> Login();
 
     public async Task Logout(string sessionId)
     {
