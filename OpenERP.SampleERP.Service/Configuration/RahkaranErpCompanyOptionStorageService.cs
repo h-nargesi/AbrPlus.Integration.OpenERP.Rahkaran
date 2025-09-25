@@ -12,7 +12,7 @@ using AbrPlus.Integration.OpenERP.Options;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
 {
-    public class SampleErpCompanyOptionStorageService : ConfigurationStorageServiceBase<SampleErpSetting>, ISampleErpCompanyOptionStorageService
+    public class RahkaranErpCompanyOptionStorageService : ConfigurationStorageServiceBase<RahkaranErpSetting>, IRahkaranErpCompanyOptionStorageService
     {
         private readonly string _storagePath;
         private readonly IOptions<AppOption> _options;
@@ -38,7 +38,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
             }
         }
 
-        public SampleErpCompanyOptionStorageService(IOptions<AppOption> options, ILoggerFactory loggerFactory)
+        public RahkaranErpCompanyOptionStorageService(IOptions<AppOption> options, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             _options = options;

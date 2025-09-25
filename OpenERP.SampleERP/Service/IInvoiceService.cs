@@ -7,7 +7,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
         string[] GetAllIds();
         InvoiceBundle GetBundle(string key);
         ChangeInfo GetChanges(string lastTrackedVersionStamp);
-        bool Save(InvoiceBundle item);
+        bool Save(InvoiceBundle invoice);
         void SetTrackingStatus(bool enabled);
         bool SyncWithCrmObjectTypeCode();
         bool Validate(InvoiceBundle item);

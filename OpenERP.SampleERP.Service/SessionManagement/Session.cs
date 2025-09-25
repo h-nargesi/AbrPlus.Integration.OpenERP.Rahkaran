@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
@@ -15,22 +16,26 @@ internal class Session : ISession
     
     public IToken Token { get; private set; }
 
-    public async Task TryCall(Func<IToken, Task> action)
+    public async Task<TResult> TryCall<TResult>(Func<IToken, Task<TResult>> action)
     {
-        var tries = 0;
-        
         if (Token == null || Token.IsExpired) 
             Token = _service.GetToken(this);
 
-        while (++tries <= 2)
+        var unauthorized = false;
+        while (true)
         {
             try
             {
-                await action(Token);
-                break;
+                return await action(Token);
             }
-            catch (Exception ex)
+            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
+                if (unauthorized)
+                {
+                    throw;
+                }
+                
+                unauthorized =  true;
                 _ = _service.ReleaseToken();
                 Token = _service.GetToken(this);
             }

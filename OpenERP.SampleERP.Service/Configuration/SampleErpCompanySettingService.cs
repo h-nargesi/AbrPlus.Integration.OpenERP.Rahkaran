@@ -15,13 +15,13 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
     public class SampleErpCompanySettingService : ISampleErpCompanySettingService
     {
         private readonly ILifetimeScope _lifetimeScope;
-        private readonly ISampleErpCompanyOptionStorageService _sampleErpCompanyOptionStorageService;
+        private readonly IRahkaranErpCompanyOptionStorageService _rahkaranErpCompanyOptionStorageService;
         private readonly ILogger<SampleErpCompanySettingService> _logger;
 
-        public SampleErpCompanySettingService(ILifetimeScope lifetimeScope, ISampleErpCompanyOptionStorageService sampleErpCompanyOptionStorageService, ILogger<SampleErpCompanySettingService> logger)
+        public SampleErpCompanySettingService(ILifetimeScope lifetimeScope, IRahkaranErpCompanyOptionStorageService rahkaranErpCompanyOptionStorageService, ILogger<SampleErpCompanySettingService> logger)
         {
             _lifetimeScope = lifetimeScope;
-            _sampleErpCompanyOptionStorageService = sampleErpCompanyOptionStorageService;
+            _rahkaranErpCompanyOptionStorageService = rahkaranErpCompanyOptionStorageService;
             _logger = logger;
         }
 
@@ -45,10 +45,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
         {
             try
             {
-                var financialConfig = _sampleErpCompanyOptionStorageService.GetConfig();
+                var financialConfig = _rahkaranErpCompanyOptionStorageService.GetConfig();
                 var targetCompany = financialConfig.CompanyConfigs.Find(company => company.Id == companyId);
 
-                var configs = _sampleErpCompanyOptionStorageService.GetSpecificConfigs();
+                var configs = _rahkaranErpCompanyOptionStorageService.GetSpecificConfigs();
 
                 var descriptions = configs.ToDictionary(x => x.Key, y => new Tuple<string, string>(y.Name, y.Description));
 
@@ -88,7 +88,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
             try
             {
                 _logger.LogInformation("SetFinancialSystemSpecificConfigs");
-                var financialSystemConfig = _sampleErpCompanyOptionStorageService.GetConfig();
+                var financialSystemConfig = _rahkaranErpCompanyOptionStorageService.GetConfig();
                 _logger.LogInformation("SetFinancialSystemSpecificConfigs 2");
                 var targetCompany = financialSystemConfig.CompanyConfigs.Find(company => company.Id == companyId);
                 if (targetCompany != null)
@@ -97,7 +97,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
                     targetCompany.SpecificSettings.AddRange(configs);
                 }
                 _logger.LogInformation("SetFinancialSystemSpecificConfigs 3");
-                _sampleErpCompanyOptionStorageService.SetConfig(financialSystemConfig);
+                _rahkaranErpCompanyOptionStorageService.SetConfig(financialSystemConfig);
             }
             catch (Exception ex)
             {

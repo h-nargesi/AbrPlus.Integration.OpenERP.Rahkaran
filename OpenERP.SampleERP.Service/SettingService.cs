@@ -14,18 +14,18 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
     {
         private readonly ILifetimeScope _lifetimeScope;
         private readonly ISampleErpCompanySettingService _sampleErpCompanySettingService;
-        private readonly ISampleErpCompanyOptionStorageService _sampleErpCompanyOptionStorageService;
+        private readonly IRahkaranErpCompanyOptionStorageService _rahkaranErpCompanyOptionStorageService;
         private readonly IConnectionStringValidator _connectionStringValidator;
         private readonly ILogger<SettingService> _logger;
         public SettingService(ILifetimeScope lifetimeScope,
                                ISampleErpCompanySettingService sampleErpCompanySettingService,
-                               ISampleErpCompanyOptionStorageService sampleErpCompanyOptionStorageService,
+                               IRahkaranErpCompanyOptionStorageService rahkaranErpCompanyOptionStorageService,
                                IConnectionStringValidator connectionStringValidator,
                                ILogger<SettingService> logger)
         {
             _lifetimeScope = lifetimeScope;
             _sampleErpCompanySettingService = sampleErpCompanySettingService;
-            _sampleErpCompanyOptionStorageService = sampleErpCompanyOptionStorageService;
+            _rahkaranErpCompanyOptionStorageService = rahkaranErpCompanyOptionStorageService;
             _connectionStringValidator = connectionStringValidator;
             _logger = logger;
         }
@@ -77,27 +77,27 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
         }
         public void DeleteFinancialSystem()
         {
-            _sampleErpCompanyOptionStorageService.RemoveFinancialSystem();
+            _rahkaranErpCompanyOptionStorageService.RemoveFinancialSystem();
         }
         public FinancialSystemConfig GetFinancialSystemConfig()
         {
-            return _sampleErpCompanyOptionStorageService.GetConfig();
+            return _rahkaranErpCompanyOptionStorageService.GetConfig();
         }
         public void SetFinancialSystemConfig(FinancialSystemConfig config)
         {
-            _sampleErpCompanyOptionStorageService.SetConfig(config);
+            _rahkaranErpCompanyOptionStorageService.SetConfig(config);
         }
         public CompanyConfig GetCompanyConfig(int companyId)
         {
-            return _sampleErpCompanyOptionStorageService.GetCompanyConfig(companyId);
+            return _rahkaranErpCompanyOptionStorageService.GetCompanyConfig(companyId);
         }
         public void SetCompanyConfig(CompanyConfig companyConfig)
         {
-            _sampleErpCompanyOptionStorageService.SetCompanyConfig(companyConfig);
+            _rahkaranErpCompanyOptionStorageService.SetCompanyConfig(companyConfig);
         }
         public void DeleteCompany(int companyId)
         {
-            _sampleErpCompanyOptionStorageService.DeleteCompany(companyId);
+            _rahkaranErpCompanyOptionStorageService.DeleteCompany(companyId);
         }
         public FinancialSystemSpecificConfig[] GetFinancialSystemSpecificConfigs(int companyId)
         {

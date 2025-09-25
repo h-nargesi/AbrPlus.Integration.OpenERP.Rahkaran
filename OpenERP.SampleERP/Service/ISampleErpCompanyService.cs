@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service
 {
-    public interface ISampleErpCompanyService : ICompanyService<SampleErpVersion, SampleErpCompanyConfig>
+    public interface ISampleErpCompanyService : ICompanyService<SampleErpVersion, RahkaranErpCompanyConfig>
     {
     }
 }

@@ -9,18 +9,18 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Options
     public class SampleErpConnectionStringOption : IOptions<ConnectionStringOption>
     {
         private readonly ICompanyContext _companyContext;
-        private readonly ISampleErpCompanyOptionStorageService _sampleErpCompanyOptionStorageService;
+        private readonly IRahkaranErpCompanyOptionStorageService _rahkaranErpCompanyOptionStorageService;
 
-        public SampleErpConnectionStringOption(ICompanyContext companyContext, ISampleErpCompanyOptionStorageService sampleErpCompanyOptionStorageService)
+        public SampleErpConnectionStringOption(ICompanyContext companyContext, IRahkaranErpCompanyOptionStorageService rahkaranErpCompanyOptionStorageService)
         {
             _companyContext = companyContext;
-            _sampleErpCompanyOptionStorageService = sampleErpCompanyOptionStorageService;
+            _rahkaranErpCompanyOptionStorageService = rahkaranErpCompanyOptionStorageService;
         }
         public ConnectionStringOption Value
         {
             get
             {
-                var option = _sampleErpCompanyOptionStorageService.GetCompanyConfig(_companyContext.CompanyId);
+                var option = _rahkaranErpCompanyOptionStorageService.GetCompanyConfig(_companyContext.CompanyId);
                 var builder = new SqlConnectionStringBuilder(option.ConnecitonString);
                 builder.TrustServerCertificate = true;
                 return new ConnectionStringOption() { ConnectionString = builder.ConnectionString };

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
 {
-    public interface ISampleErpCompanyOptionService : ICompanyOptionService<SampleErpCompanyConfig>
+    public interface IRahkaranErpCompanyOptionStorageService : IConfigurationStorageServiceBase<RahkaranErpSetting>
     {
     }
 }

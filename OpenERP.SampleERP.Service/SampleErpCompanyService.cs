@@ -17,25 +17,25 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
     public class SampleErpCompanyService : ISampleErpCompanyService
     {
         private readonly ICompanyContext _companyContext;
-        private readonly ISampleErpCompanyOptionService _sampleErpCompanyOptionService;
+        private readonly IRahkaranErpCompanyOptionService _rahkaranErpCompanyOptionService;
         private readonly AppOption _appOptions;
         private readonly ILogger<SampleErpCompanyService> _logger;
 
         public SampleErpCompanyService(ICompanyContext companyContext,
-                                      ISampleErpCompanyOptionService sampleErpCompanyOptionService,
+                                      IRahkaranErpCompanyOptionService rahkaranErpCompanyOptionService,
                                       IOptions<AppOption> options,
                                       ILogger<SampleErpCompanyService> logger)
         {
             _companyContext = companyContext;
-            _sampleErpCompanyOptionService = sampleErpCompanyOptionService;
+            _rahkaranErpCompanyOptionService = rahkaranErpCompanyOptionService;
             _appOptions = options.Value;
             _logger = logger;
         }
 
 
-        public SampleErpCompanyConfig GetCompanyConfig()
+        public RahkaranErpCompanyConfig GetCompanyConfig()
         {
-            return _sampleErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId);
+            return _rahkaranErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId);
         }
         public string GetCurrentVersion()
         {

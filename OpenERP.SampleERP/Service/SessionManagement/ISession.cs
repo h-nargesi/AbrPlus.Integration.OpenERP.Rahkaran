@@ -7,5 +7,5 @@ public interface ISession : IDisposable
 {
     IToken Token { get; }
     
-    Task TryCall(Func<IToken, Task> action);
+    Task<TResult> TryCall<TResult>(Func<IToken, Task<TResult>> action);
 }
