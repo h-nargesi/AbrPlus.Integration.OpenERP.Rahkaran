@@ -10,24 +10,17 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service.LoginServices;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogger<RahkaranAuthenticationSslService> logger) : 
-    RahkaranAuthenticationBaseService(options, logger)
+internal class AuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationSslService> logger) : 
+    AuthenticationBaseService(options, logger)
 {
-    public override async Task<SessionInfo> Login()
+    public override async Task<IToken> Login()
     {
-        var baseUrl = Options.BaseUrl;
-        if (baseUrl.EndsWith('/')) baseUrl = baseUrl[..^1];
-
-        var basePath = Options.BasePath.Authentication;
-        if (basePath.StartsWith('/')) basePath = basePath[1..];
-        if (basePath.EndsWith('/')) basePath = basePath[..^1];
-
         var data = new
         {
-            username = Options.Username,
-            password = Options.Password,
+            username = Username,
+            password = Password,
         };
 
         var content = new StringContent(
@@ -36,7 +29,7 @@ internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlInfo> option
             MediaTypeNames.Application.Json);
 
         using var client = new HttpClient();
-        using var response = await client.PostAsync($"{baseUrl}/{basePath}/ssllogin", content);
+        using var response = await client.PostAsync($"{BaseUrl}/{BasePath}/ssllogin", content);
         response.EnsureSuccessStatusCode();
 
         if (!response.Headers.TryGetValues("Set-Cookie", out var textCookie))
@@ -53,9 +46,6 @@ internal class RahkaranAuthenticationSslService(IOptions<RahkaranUrlInfo> option
             .GroupBy(c => c.Trim().Split('=')[0], StringComparer.OrdinalIgnoreCase)
             .ToDictionary(k => k.Key, v => v.First());
 
-        return new SessionInfo
-        {
-            Coockie = string.Join(';', cookie.Values),
-        };
+        return TokenService.MakeToken(null, string.Join(';', cookie.Values));
     }
 }

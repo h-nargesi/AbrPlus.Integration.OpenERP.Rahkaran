@@ -1,15 +1,16 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Shared;
 public static class JsonObjectExtension
 {
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        Converters = { new MicrosoftDateTimeConverter() },
+        WriteIndented = true
+    };
+    
     public static string SerializeJson(this object obj)
     {
-        var serializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
-        return JsonConvert.SerializeObject(obj, serializerSettings);
+        return JsonSerializer.Serialize(obj, Options);
     }
 }
