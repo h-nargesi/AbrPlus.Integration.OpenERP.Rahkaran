@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenERP.SampleERP.Repositor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenERP.SampleERP.Api", "OpenERP.SampleERP.Api\OpenERP.SampleERP.Api.csproj", "{849398A4-6CE8-4E43-B1F1-DEE1545CF3D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenERP.SampleERP.Test", "Test\OpenERP.SampleERP.Test.csproj", "{DE59F87F-D1B3-488B-8533-9CD08EC93488}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenERP.SampleERP.Test", "OpenERP.SampleERP.Service.Test\OpenERP.SampleERP.Test.csproj", "{DE59F87F-D1B3-488B-8533-9CD08EC93488}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
