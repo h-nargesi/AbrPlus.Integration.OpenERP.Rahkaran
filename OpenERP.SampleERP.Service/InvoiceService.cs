@@ -119,8 +119,10 @@ public class InvoiceService(ISession session, IOptions<RahkaranUrlInfo> options,
 internal interface IInvoiceWebService
 {
     [Get("get")]
+    [Headers("Content-Type: application/json")]
     Task<InvoiceDto> Get(string key, [Header("Cookie")] string cookie);
     
     [Get("save")]
+    [Headers("Content-Type: application/json")]
     Task<object> Save(InvoiceDto item, [Header("Cookie")] string cookie);
 }

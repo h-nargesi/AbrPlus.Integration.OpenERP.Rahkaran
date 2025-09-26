@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Refit;
 
@@ -33,7 +34,7 @@ public class Session : ISession
             {
                 return await action(Token);
             }
-            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
                 if (unauthorized)
                 {

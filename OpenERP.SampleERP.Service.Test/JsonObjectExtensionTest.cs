@@ -1,5 +1,4 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Shared;
-using System.Text.RegularExpressions;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 

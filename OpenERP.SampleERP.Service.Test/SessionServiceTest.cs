@@ -1,7 +1,6 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json.Linq;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
