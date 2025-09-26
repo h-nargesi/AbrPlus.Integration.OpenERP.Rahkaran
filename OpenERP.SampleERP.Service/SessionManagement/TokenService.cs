@@ -25,7 +25,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
             result = GetTokenOrTask();
         }
 
-        logger.LogInformation("Make Token get ready: {sessionId}", _currentToken.SessionId);
+        logger.LogInformation("Make Token get ready ...");
 
         return result;
     }
@@ -53,7 +53,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
     {
         lock (_lock)
         {
-            if (_calls.Remove(session)) return LogoutAsync(session.Token);
+            if (_calls.Remove(session)) return LogoutAsync(session.Token.SessionId);
             if (_calls.Count <= 0) return Task.CompletedTask;
 
             _logoutCts = new CancellationTokenSource();
@@ -63,7 +63,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
 
     public Task ReleaseToken()
     {
-        IToken token;
+        string sessionId;
 
         lock (_lock)
         {
@@ -74,11 +74,11 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
                 tokenToRelease.IsExpired = true;
             }
 
-            token = _currentToken;
+            sessionId = _currentToken?.SessionId;
             _currentToken = null;
         }
 
-        return token == null ? Task.CompletedTask : LogoutAsync(token);
+        return sessionId == null ? Task.CompletedTask : LogoutAsync(sessionId);
     }
 
     private Task<IToken> GetTokenOrTask()
@@ -98,20 +98,20 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
         {
             await Task.Delay(_idleTimeout, cancelToken);
 
-            IToken token;
+            string sessionId;
 
             lock (_lock)
             {
                 if (_calls.Count <= 0)
                 {
-                    token = _currentToken;
+                    sessionId = _currentToken?.SessionId;
                     _currentToken = null;
                 }
-                else token = null;
+                else sessionId = null;
             }
 
-            if (token != null)
-                await LogoutAsync(_currentToken);
+            if (sessionId != null)
+                await LogoutAsync(sessionId);
         }
         catch (TaskCanceledException)
         {
@@ -122,12 +122,12 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
         }
     }
 
-    private async Task LogoutAsync(IToken token)
+    private async Task LogoutAsync(string sessionId)
     {
-        if (token == null) return;
+        if (sessionId == null) return;
 
-        await authService.Logout(token);
-        logger.LogInformation("Logged out. SessionId: {sessionId}", token.SessionId);
+        await authService.Logout(sessionId);
+        logger.LogInformation("Logged out. SessionId: {sessionId}", sessionId);
     }
 
     public static IToken MakeToken(string sessionId, string cookie)

@@ -1,12 +1,11 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
-using AbrPlus.Integration.OpenERP.SampleERP.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
+using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
@@ -35,11 +34,11 @@ internal abstract class AuthenticationBaseService : IAuthenticationService
 
     public abstract Task<IToken> Login();
 
-    public async Task Logout(IToken token)
+    public async Task Logout(string sessionId)
     {
         var data = new
         {
-            sessionId = token.SessionId,
+            sessionId,
         };
 
         var content = new StringContent(

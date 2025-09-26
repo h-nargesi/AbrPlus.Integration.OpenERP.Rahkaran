@@ -4,11 +4,11 @@ using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal class Session : ISession
+public class Session : ISession
 {
     private readonly ITokenService _service;
 
-    protected Session(ITokenService service)
+    public Session(ITokenService service)
     {
         _service = service;
         service.MakeTokenGetReady();
@@ -44,6 +44,7 @@ internal class Session : ISession
 
     public void Dispose()
     {
-        _service.ReleaseSession(this);
+        _ = _service.ReleaseSession(this);
+        GC.SuppressFinalize(this);
     }
 }

@@ -6,5 +6,5 @@ public interface IAuthenticationService
 {
     Task<IToken> Login();
 
-    Task Logout(IToken token);
+    Task Logout(string sessionId);
 }

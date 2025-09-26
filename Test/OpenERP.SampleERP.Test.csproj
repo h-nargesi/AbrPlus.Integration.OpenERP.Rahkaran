@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>AbrPlus.Integration.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>AbrPlus.Integration.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="Moq" VersionOverride="4.20.72" />
+		<PackageReference Include="xunit" Version="2.5.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\OpenERP.SampleERP.Api\OpenERP.SampleERP.Api.csproj" />
+	  <ProjectReference Include="..\OpenERP.SampleERP.Repository\OpenERP.SampleERP.Repository.csproj" />
+	  <ProjectReference Include="..\OpenERP.SampleERP.Service\OpenERP.SampleERP.Service.csproj" />
+	  <ProjectReference Include="..\OpenERP.SampleERP\OpenERP.SampleERP.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+</Project>
