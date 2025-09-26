@@ -14,13 +14,19 @@ internal static class CustomerExtension
             EconomicCode = dto.EconomicCode,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
-            Gender = dto.Gender == 1 ? "M" : "F",
             Id = dto.ID.ToString(),
             IdentityType = dto.Type == 1 ? IdentityType.Corporate : IdentityType.Person,
             NationalCode = dto.NationalID,
             NickName = dto.Alias,
             OrganizationName = dto.CompanyName,
         };
+
+        if (dto.Gender.HasValue)
+        {
+            bundle.Gender = dto.Gender == 1 ? "M" : "F";
+        }
+
+        if (dto.PartyAddresses == null) return bundle;
 
         var addresses = new List<ContactAddress>();
         var phones = new List<ContactPhone>();
@@ -74,13 +80,18 @@ internal static class CustomerExtension
             EconomicCode = bundle.EconomicCode,
             FirstName = bundle.FirstName,
             LastName = bundle.LastName,
-            Gender = bundle.Gender == "M" ? 1 : 2,
             ID = id,
             Type = bundle.IdentityType == IdentityType.Corporate ? 1 : 0,
             NationalID = bundle.NationalCode,
             Alias = bundle.NickName,
             CompanyName = bundle.OrganizationName,
         };
+
+        if (!string.IsNullOrEmpty(bundle.Gender))
+        {
+            dto.Gender = bundle.Gender == "M" ? 1 : 2;
+        }
+        else dto.Gender = null;
 
         PartyAddressDataDto main = null;
         var contacts = new Dictionary<long, PartyAddressDataDto>();
