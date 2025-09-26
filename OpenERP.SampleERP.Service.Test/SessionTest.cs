@@ -1,7 +1,8 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Service;
+using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
@@ -10,9 +11,16 @@ public class SessionTest
 {
     private readonly Mock<ILogger<TokenService>> Logger = new();
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
+    private readonly Mock<ISampleErpCompanyService> Company = new();
 
     public SessionTest()
     {
+        Company.Setup(x => x.GetCompanyConfig())
+            .Returns(new RahkaranErpCompanyConfig
+            {
+                IdleTimeout = 10,
+            });
+
         Logger.Setup(x => x.Log(
             LogLevel.Information,
             It.IsAny<EventId>(),
@@ -42,7 +50,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Simple_Exception()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
         using var session = new Session(service);
 
         var action = () => TryCallWithSimpleException(session);
@@ -53,7 +61,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Unauthorized_Always_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
         using var session = new Session(service);
 
         Action action = () => TryCallWithAlwaysUnauthorizedException(session);
@@ -64,7 +72,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Unauthorized_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
         using var session = new Session(service);
 
         var token1 = session.GetToken();

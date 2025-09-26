@@ -1,5 +1,4 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
-using AbrPlus.Integration.OpenERP.SampleERP.Options;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal class AuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationSslService> logger) : 
-    AuthenticationBaseService(options, logger)
+internal class AuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationSslService> logger, ISampleErpCompanyService company) : 
+    AuthenticationBaseService(options, logger, company)
 {
     public override async Task<IToken> Login()
     {

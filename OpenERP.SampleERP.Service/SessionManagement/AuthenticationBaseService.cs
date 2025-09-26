@@ -17,19 +17,21 @@ internal abstract class AuthenticationBaseService : IAuthenticationService
     protected readonly string Username;
     protected readonly string Password;
 
-    protected AuthenticationBaseService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationBaseService> logger)
+    protected AuthenticationBaseService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationBaseService> logger, ISampleErpCompanyService company)
     {
         Logger = logger;
-        
-        BaseUrl = options.Value.BaseUrl;
+
+        var config = company.GetCompanyConfig();
+
+        BaseUrl = config?.RahkaranWebServiceUrl ?? options.Value.BaseUrl;
         if (BaseUrl.EndsWith('/')) BaseUrl = BaseUrl[..^1];
 
         BasePath = options.Value.BasePath.Authentication;
         if (BasePath.StartsWith('/')) BasePath = BasePath[1..];
         if (BasePath.EndsWith('/')) BasePath = BasePath[..^1];
 
-        Username = options.Value.Username;
-        Password = options.Value.Password;
+        Username = config?.RahkaranUsername ?? options.Value.Username;
+        Password = config?.RahkaranPassword ?? options.Value.Password;
     }
 
     public abstract Task<IToken> Login();

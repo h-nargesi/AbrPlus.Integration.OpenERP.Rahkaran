@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-public class TokenService(IAuthenticationService authService, ILogger<TokenService> logger) : ITokenService
+public class TokenService(IAuthenticationService authService, ILogger<TokenService> logger, ISampleErpCompanyService company) : ITokenService
 {
-    public readonly TimeSpan IdleTimeout = TimeSpan.FromSeconds(10);
     private readonly object _lock = new();
     private readonly HashSet<ISession> _calls = [];
     private Task<IToken> _intentToGenerateToken;
@@ -96,6 +95,9 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
     {
         try
         {
+            var config = company.GetCompanyConfig();
+            var IdleTimeout = TimeSpan.FromSeconds(config.IdleTimeout < 10 ? 10 : config.IdleTimeout);
+
             await Task.Delay(IdleTimeout, cancelToken);
 
             string sessionId;

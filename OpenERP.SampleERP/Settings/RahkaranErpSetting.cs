@@ -18,5 +18,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Settings
         [Display(GroupName = "وب سرور", Name = "کلمه عبور", Description = "کلمه عبور")]
         [UIHint("Text")]
         public string RahkaranPassword { get; set; }
+
+        [Display(GroupName = "وب سرور", Name = "زمان انتظار خروچ", Description = "زمان انتظار برای خروج در بیکاری سیستم")]
+        [UIHint("Text")]
+        public string RahkaranLoginIdleTimeout { get; set; }
     }
 }

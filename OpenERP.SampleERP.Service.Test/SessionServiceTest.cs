@@ -1,6 +1,7 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Service;
+using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
@@ -8,9 +9,16 @@ public class SessionServiceTest
 {
     private readonly Mock<ILogger<TokenService>> Logger = new();
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
+    private readonly Mock<ISampleErpCompanyService> Company = new();
 
     public SessionServiceTest()
     {
+        Company.Setup(x => x.GetCompanyConfig())
+            .Returns(new RahkaranErpCompanyConfig
+            {
+                IdleTimeout = 10,
+            });
+
         Logger.Setup(x => x.Log(
             LogLevel.Information,
             It.IsAny<EventId>(),
@@ -40,7 +48,7 @@ public class SessionServiceTest
     [Fact]
     public async Task MakeTokenGetReady_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
 
         var task = service.MakeTokenGetReady();
 
@@ -56,7 +64,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
 
         var count = 5;
         var loop = 2;
@@ -84,7 +92,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_TimePassed_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
 
         var count = 5;
         var loop = 2;
@@ -108,8 +116,7 @@ public class SessionServiceTest
             tokenBefore = token;
         }
 
-        Thread.Sleep(service.IdleTimeout);
-        Thread.Sleep(1000);
+        Thread.Sleep((1 + Company.Object.GetCompanyConfig().IdleTimeout) * 1000);
 
         using var newSession = new Session(service);
         var newToken = newSession.GetToken();
@@ -126,7 +133,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_ReleaseToken_401_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
 
         var count = 5;
         var tokens = new List<IToken>(count);
@@ -147,8 +154,7 @@ public class SessionServiceTest
             tokenBefore = token;
         }
 
-        Thread.Sleep(service.IdleTimeout);
-        Thread.Sleep(1000);
+        Thread.Sleep((1 + Company.Object.GetCompanyConfig().IdleTimeout) * 1000);
 
         using var newSession = new Session(service);
         newSession.GetToken();
