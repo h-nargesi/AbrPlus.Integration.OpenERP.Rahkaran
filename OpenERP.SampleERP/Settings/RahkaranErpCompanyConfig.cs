@@ -4,9 +4,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Settings
 {
     public class RahkaranErpCompanyConfig : BaseFlatCompanyConfig
     {
-        public string RahkaranWebServiceUrl { get; set; }
-        public string RahkaranUsername { get; set; }
-        public string RahkaranPassword { get; set; }
+        public string BaseUrl { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
         public int IdleTimeout { get; set; }
     }
 }

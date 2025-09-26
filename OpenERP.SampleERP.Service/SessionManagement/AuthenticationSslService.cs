@@ -1,18 +1,12 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Mime;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal class AuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationSslService> logger, ISampleErpCompanyService company) : 
-    AuthenticationBaseService(options, logger, company)
+public class AuthenticationSslService(ISampleErpCompanyService company, ILogger<AuthenticationSslService> logger) : 
+    AuthenticationBaseService(company, logger)
 {
     public override async Task<IToken> Login()
     {
@@ -22,13 +16,8 @@ internal class AuthenticationSslService(IOptions<RahkaranUrlInfo> options, ILogg
             password = Password,
         };
 
-        var content = new StringContent(
-            data.SerializeJson(),
-            Encoding.UTF8,
-            MediaTypeNames.Application.Json);
-
-        using var client = new HttpClient();
-        using var response = await client.PostAsync($"{BaseUrl}/{BasePath}/ssllogin", content);
+        var client = GetWebService();
+        using var response = await client.LoginSsl(data);
         response.EnsureSuccessStatusCode();
 
         if (!response.Headers.TryGetValues("Set-Cookie", out var textCookie))

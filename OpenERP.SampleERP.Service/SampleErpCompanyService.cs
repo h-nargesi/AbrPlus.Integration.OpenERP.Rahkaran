@@ -1,16 +1,13 @@
 ﻿using AbrPlus.Integration.OpenERP.Helpers;
 using AbrPlus.Integration.OpenERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Enums;
+using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration;
 using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using AbrPlus.Integration.OpenERP.Service;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service
 {
@@ -19,23 +16,34 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
         private readonly ICompanyContext _companyContext;
         private readonly IRahkaranErpCompanyOptionService _rahkaranErpCompanyOptionService;
         private readonly AppOption _appOptions;
+        private readonly RahkaranUrlInfo _rahkaranOptions;
         private readonly ILogger<SampleErpCompanyService> _logger;
 
         public SampleErpCompanyService(ICompanyContext companyContext,
                                       IRahkaranErpCompanyOptionService rahkaranErpCompanyOptionService,
                                       IOptions<AppOption> options,
+                                      IOptions<RahkaranUrlInfo> rahkaranOptions,
                                       ILogger<SampleErpCompanyService> logger)
         {
             _companyContext = companyContext;
             _rahkaranErpCompanyOptionService = rahkaranErpCompanyOptionService;
             _appOptions = options.Value;
+            _rahkaranOptions = rahkaranOptions.Value;
             _logger = logger;
         }
 
-
         public RahkaranErpCompanyConfig GetCompanyConfig()
         {
-            return _rahkaranErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId);
+            var result = _rahkaranErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId)
+                ?? new RahkaranErpCompanyConfig();
+
+            result.BaseUrl ??= _rahkaranOptions.BaseUrl;
+            result.Username ??= _rahkaranOptions.Username;
+            result.Password ??= _rahkaranOptions.Password;
+
+            if (result.BaseUrl != null && result.BaseUrl.EndsWith('/')) result.BaseUrl = result.BaseUrl[..^1];
+
+            return result;
         }
         public string GetCurrentVersion()
         {

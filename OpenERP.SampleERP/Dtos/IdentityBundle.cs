@@ -1,56 +1,33 @@
-﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
-using AbrPlus.Integration.OpenERP.Enums;
-using System;
+﻿namespace AbrPlus.Integration.OpenERP.SampleERP.Dtos;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Dtos;
-
-public class IdentityDto : BundleBase
+public class IdentityDto
 {
-    public string Id { get; set; }
-
-    public IdentityType IdentityType { get; set; }
-
-    public string BusinessType { get; set; }
-
-    public decimal? Balance { get; set; }
-
-    public ContactAddress[] Addresses { get; set; }
-
-    public DateTime? CustomerDate { get; set; }
-
-    public string CustomerNo { get; set; }
-
-    public ContactPhone[] Phones { get; set; }
-
-    public string Description { get; set; }
-
-    public string Email { get; set; }
-
-    public string Gender { get; set; }
-
-    public string NationalCode { get; set; }
-
+    public string Alias { get; set; }
+    public string CompanyName { get; set; }
+    public string Company_EN { get; set; }
     public string EconomicCode { get; set; }
-
-    public string NickName { get; set; }
-
-    public string OrganizationName { get; set; }
-
-    public DateTime? RegisterBirthDate { get; set; }
-
-    public string RegisterNo { get; set; }
-
-    public string TradeMark { get; set; }
-
-    public string Website { get; set; }
-
-    public string LastName { get; set; }
-
     public string FirstName { get; set; }
+    public string FirstName_EN { get; set; }
+    public int Gender { get; set; }
+    public long ID { get; set; }
+    public string LastName { get; set; }
+    public string LastName_EN { get; set; }
+    public string NationalID { get; set; }
+    public PartyAddressDataDto[] PartyAddresses { get; set; }
+    public int Type { get; set; }
+}
 
-    public DateTime? BirthDate { get; set; }
-
-    public string CategoryPathToRoot { get; set; }
-
-    public string SubSystemKey { get; set; }
+public class PartyAddressDataDto
+{
+    public string Details { get; set; }
+    public string Details_En { get; set; }
+    public string Email { get; set; }
+    public string Fax { get; set; }
+    public long ID { get; set; }
+    public bool IsMainAddress { get; set; }
+    public string Name { get; set; }
+    public string Phone { get; set; }
+    public long RegionalDivisionRef { get; set; }
+    public string WebPage { get; set; }
+    public string ZipCode { get; set; }
 }

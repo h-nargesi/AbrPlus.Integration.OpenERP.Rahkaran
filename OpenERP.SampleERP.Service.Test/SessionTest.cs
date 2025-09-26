@@ -9,7 +9,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
 public class SessionTest
 {
-    private readonly Mock<ILogger<TokenService>> Logger = new();
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
     private readonly Mock<ISampleErpCompanyService> Company = new();
 
@@ -20,22 +19,6 @@ public class SessionTest
             {
                 IdleTimeout = 10,
             });
-
-        Logger.Setup(x => x.Log(
-            LogLevel.Information,
-            It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => true),
-            null,
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-        ));
-
-        Logger.Setup(x => x.Log(
-            LogLevel.Error,
-            It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => true),
-            It.IsAny<Exception>(),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-        ));
 
         int Counter = 0;
         AuthenticationService.Setup(x => x.Login())
@@ -50,7 +33,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Simple_Exception()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
         using var session = new Session(service);
 
         var action = () => TryCallWithSimpleException(session);
@@ -61,7 +44,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Unauthorized_Always_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
         using var session = new Session(service);
 
         Action action = () => TryCallWithAlwaysUnauthorizedException(session);
@@ -72,7 +55,7 @@ public class SessionTest
     [Fact]
     public void GetToken_Unauthorized_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
         using var session = new Session(service);
 
         var token1 = session.GetToken();

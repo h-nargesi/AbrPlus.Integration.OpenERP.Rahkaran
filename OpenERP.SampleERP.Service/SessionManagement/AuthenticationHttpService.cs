@@ -1,28 +1,20 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal class AuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationHttpService> logger, ISampleErpCompanyService company) :
-    AuthenticationBaseService(options, logger, company)
+public class AuthenticationHttpService(ISampleErpCompanyService company, ILogger<AuthenticationHttpService> logger) :
+    AuthenticationBaseService(company, logger)
 {
     public override async Task<IToken> Login()
     {
-        using var client = new HttpClient();
-        using var sessionResponse = await client.GetAsync($"{BaseUrl}/{BasePath}/session");
-        sessionResponse.EnsureSuccessStatusCode();
-        var session = JsonSerializer.Deserialize<AuthenticationSession>(await sessionResponse.Content.ReadAsStringAsync());
+        var client = GetWebService();
+        var session = await client.Session();
 
         var m = HexStringToBytes(session.Rsa.M);
         var e = HexStringToBytes(session.Rsa.E);
@@ -39,12 +31,7 @@ internal class AuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILog
             password = BytesToHexString(rsa.Encrypt(Encoding.Default.GetBytes(sessionPlusPassword), false)),
         };
 
-        var content = new StringContent(
-            data.SerializeJson(),
-            Encoding.UTF8,
-            MediaTypeNames.Application.Json);
-
-        using var loginResponse = await client.PostAsync($"{BaseUrl}/{BasePath}/login", content);
+        using var loginResponse = await client.Login(data);
         loginResponse.EnsureSuccessStatusCode();
 
         if (!loginResponse.Headers.TryGetValues("Set-Cookie", out var textCookie))
@@ -97,7 +84,7 @@ internal class AuthenticationHttpService(IOptions<RahkaranUrlInfo> options, ILog
         return hexString.ToString();
     }
 
-    private class AuthenticationSession
+    public class AuthenticationSession
     {
         public string Id { get; set; }
 

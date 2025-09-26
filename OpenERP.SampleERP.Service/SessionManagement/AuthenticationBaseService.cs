@@ -1,55 +1,40 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Options;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Net.Http;
-using System.Net.Mime;
-using System.Text;
+﻿using Microsoft.Extensions.Logging;
+using Refit;
 using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-internal abstract class AuthenticationBaseService : IAuthenticationService
+public abstract class AuthenticationBaseService : IAuthenticationService
 {
+    protected const string BasePath = "/Services/Framework/AuthenticationService.svc";
+
     protected readonly ILogger<AuthenticationBaseService> Logger;
     protected readonly string BaseUrl;
-    protected readonly string BasePath;
     protected readonly string Username;
     protected readonly string Password;
 
-    protected AuthenticationBaseService(IOptions<RahkaranUrlInfo> options, ILogger<AuthenticationBaseService> logger, ISampleErpCompanyService company)
+    protected AuthenticationBaseService(ISampleErpCompanyService company, ILogger<AuthenticationBaseService> logger)
     {
         Logger = logger;
 
         var config = company.GetCompanyConfig();
 
-        BaseUrl = config?.RahkaranWebServiceUrl ?? options.Value.BaseUrl;
-        if (BaseUrl.EndsWith('/')) BaseUrl = BaseUrl[..^1];
-
-        BasePath = options.Value.BasePath.Authentication;
-        if (BasePath.StartsWith('/')) BasePath = BasePath[1..];
-        if (BasePath.EndsWith('/')) BasePath = BasePath[..^1];
-
-        Username = config?.RahkaranUsername ?? options.Value.Username;
-        Password = config?.RahkaranPassword ?? options.Value.Password;
+        BaseUrl = config?.BaseUrl;
+        Username = config?.Username;
+        Password = config?.Password;
     }
 
     public abstract Task<IToken> Login();
 
     public async Task Logout(string sessionId)
     {
-        var data = new
-        {
-            sessionId,
-        };
-
-        var content = new StringContent(
-            data.SerializeJson(),
-            Encoding.UTF8,
-            MediaTypeNames.Application.Json);
-
-        using var client = new HttpClient();
-        using var sessionResponse = await client.PostAsync($"{BaseUrl}/{BasePath}/logout", content);
+        var client = GetWebService();
+        var sessionResponse = await client.Logout(sessionId);
         sessionResponse.EnsureSuccessStatusCode();
+    }
+
+    protected IAuthenticationWebService GetWebService()
+    {
+        return RestService.For<IAuthenticationWebService>(BaseUrl + BasePath);
     }
 }

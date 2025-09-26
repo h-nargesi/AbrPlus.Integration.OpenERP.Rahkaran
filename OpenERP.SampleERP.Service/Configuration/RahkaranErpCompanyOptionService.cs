@@ -17,12 +17,15 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
                 idleTimeout = 0;
             }
 
+            var rakaranWebServiceUrl = settings.RahkaranWebServiceUrl;
+            if (rakaranWebServiceUrl != null && rakaranWebServiceUrl.EndsWith('/')) rakaranWebServiceUrl = rakaranWebServiceUrl[..^1];
+
             return new RahkaranErpCompanyConfig
             {
                 ConnectionString = company.ConnecitonString,
-                RahkaranWebServiceUrl = settings.RahkaranWebServiceUrl,
-                RahkaranUsername = settings.RahkaranUsername,
-                RahkaranPassword = settings.RahkaranPassword,
+                BaseUrl = rakaranWebServiceUrl,
+                Username = settings.RahkaranUsername,
+                Password = settings.RahkaranPassword,
                 IdleTimeout = idleTimeout,
             };
         }

@@ -7,7 +7,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
 public class SessionServiceTest
 {
-    private readonly Mock<ILogger<TokenService>> Logger = new();
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
     private readonly Mock<ISampleErpCompanyService> Company = new();
 
@@ -18,22 +17,6 @@ public class SessionServiceTest
             {
                 IdleTimeout = 10,
             });
-
-        Logger.Setup(x => x.Log(
-            LogLevel.Information,
-            It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => true),
-            null,
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-        ));
-
-        Logger.Setup(x => x.Log(
-            LogLevel.Error,
-            It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => true),
-            It.IsAny<Exception>(),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-        ));
 
         int Counter = 0;
         AuthenticationService.Setup(x => x.Login())
@@ -48,7 +31,7 @@ public class SessionServiceTest
     [Fact]
     public async Task MakeTokenGetReady_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
 
         var task = service.MakeTokenGetReady();
 
@@ -64,7 +47,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
 
         var count = 5;
         var loop = 2;
@@ -92,7 +75,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_TimePassed_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
 
         var count = 5;
         var loop = 2;
@@ -133,7 +116,7 @@ public class SessionServiceTest
     [Fact]
     public void GetToken_ReleaseToken_401_Test()
     {
-        var service = new TokenService(AuthenticationService.Object, Logger.Object, Company.Object);
+        var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
 
         var count = 5;
         var tokens = new List<IToken>(count);

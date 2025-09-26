@@ -1,50 +1,49 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
-using AbrPlus.Integration.OpenERP.SampleERP.Options;
 using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Refit;
 using System;
 using System.Collections.Generic;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
-public class CustomerService(ISession session, IOptions<RahkaranUrlInfo> options, ILogger<CustomerService> logger, ISampleErpCompanyService company, ICustomerRepository repository) : ICustomerService
+public class CustomerService(ISession session, ICustomerRepository repository, ISampleErpCompanyService company, ILogger<CustomerService> logger) : ICustomerService
 {
+    private const string BasePath = "/Services/General/PartyManagement/PartyService.svc";
+    private readonly RahkaranErpCompanyConfig config = company.GetCompanyConfig();
+
     public IdentityBundle GetBundle(string key)
     {
         try
         {
-            var setting = company.GetCompanyConfig();
+            var service = GetRestService();
 
-            throw new NotImplementedException();
+            var lookup = new
+            {
+                firstName = key,
+                lastName = key,
+                company = key,
+            };
+            var dto = session.TryCall((token) => service.FetchParty(lookup, token.Cookie)).Result;
+
+            return dto.ToBundle();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in GetBundle");
+            logger.LogError(ex, "Error in CustomerService.GetBundle");
             throw;
         }
     }
 
     public IdentityBundle GetBundleByCode(string key)
     {
-        try
-        {
-            var setting = company.GetCompanyConfig();
-
-            throw new NotImplementedException();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error in GetBundleByCode");
-            throw;
-        }
+        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
     }
 
     public ChangeInfo GetChanges(string lastTrackedVersionStamp)
     {
-        var config = company.GetCompanyConfig();
-
         long currentTrackingVersion = repository.GetCurrentTrackingVersion();
 
         if (long.TryParse(lastTrackedVersionStamp, out var lastTrackedVersion) &&
@@ -57,13 +56,29 @@ public class CustomerService(ISession session, IOptions<RahkaranUrlInfo> options
 
         //ToDo : add changes to toReturn.Changes
 
+        throw new NotImplementedException();
 
-        return toReturn;
+        //return toReturn;
     }
 
-    public bool Save(IdentityBundle item)
+    public bool Save(IdentityBundle bundle)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var service = GetRestService();
+
+            var dto = bundle.ToDto();
+            var result = dto.ID > 0 ?
+                session.TryCall((token) => service.GenerateParty(dto, token.Cookie)).Result :
+                session.TryCall((token) => service.EditParty(dto, token.Cookie)).Result;
+
+            return result?.ValidationErrors.Count == 0;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in CustomerService.Save");
+            throw;
+        }
     }
 
     public bool Validate(IdentityBundle item)
@@ -85,14 +100,11 @@ public class CustomerService(ISession session, IOptions<RahkaranUrlInfo> options
 
     public string[] GetAllIds()
     {
-        var config = company.GetCompanyConfig();
-
         throw new NotImplementedException();
     }
 
     public decimal GetCustomerBalance(string customerCode)
     {
-        var config = company.GetCompanyConfig();
         throw new NotImplementedException();
     }
 
@@ -100,5 +112,10 @@ public class CustomerService(ISession session, IOptions<RahkaranUrlInfo> options
     {
         var config = company.GetCompanyConfig();
         throw new NotImplementedException();
+    }
+
+    private IPartyWebService GetRestService()
+    {
+        return RestService.For<IPartyWebService>(config.BaseUrl + BasePath);
     }
 }
