@@ -1,4 +1,3 @@
-using AbrPlus.Integration.OpenERP.SampleERP.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
 public class TokenService(IAuthenticationService authService, ILogger<TokenService> logger) : ITokenService
 {
-    private readonly TimeSpan _idleTimeout = TimeSpan.FromSeconds(60);
+    public readonly TimeSpan IdleTimeout = TimeSpan.FromSeconds(10);
     private readonly object _lock = new();
     private readonly HashSet<ISession> _calls = [];
     private Task<IToken> _intentToGenerateToken;
@@ -53,8 +52,8 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
     {
         lock (_lock)
         {
-            if (_calls.Remove(session)) return LogoutAsync(session.Token.SessionId);
-            if (_calls.Count <= 0) return Task.CompletedTask;
+            if (!_calls.Remove(session)) return LogoutAsync(session.Token?.SessionId);
+            if (session.Token == null || _calls.Count > 0) return Task.CompletedTask;
 
             _logoutCts = new CancellationTokenSource();
             return ScheduleLogoutAsync(_logoutCts.Token);
@@ -76,6 +75,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
 
             sessionId = _currentToken?.SessionId;
             _currentToken = null;
+            _intentToGenerateToken = null;
         }
 
         return sessionId == null ? Task.CompletedTask : LogoutAsync(sessionId);
@@ -96,7 +96,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
     {
         try
         {
-            await Task.Delay(_idleTimeout, cancelToken);
+            await Task.Delay(IdleTimeout, cancelToken);
 
             string sessionId;
 
@@ -106,6 +106,7 @@ public class TokenService(IAuthenticationService authService, ILogger<TokenServi
                 {
                     sessionId = _currentToken?.SessionId;
                     _currentToken = null;
+                    _intentToGenerateToken = null;
                 }
                 else sessionId = null;
             }

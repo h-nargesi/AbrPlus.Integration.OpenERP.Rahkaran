@@ -1,6 +1,7 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Newtonsoft.Json.Linq;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
@@ -8,7 +9,6 @@ public class SessionServiceTest
 {
     private readonly Mock<ILogger<TokenService>> Logger = new();
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
-    private int Counter = 0;
 
     public SessionServiceTest()
     {
@@ -28,11 +28,12 @@ public class SessionServiceTest
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ));
 
+        int Counter = 0;
         AuthenticationService.Setup(x => x.Login())
-            .Returns(Task.Run(() => {
+            .Returns(() => Task.Run(() =>
+            {
                 Thread.Sleep(1000);
-                int ticket;
-                lock (AuthenticationService) ticket = ++Counter;
+                var ticket = ++Counter;
                 return TokenService.MakeToken($"S{ticket}", $"C{ticket}");
             }));
     }
@@ -58,19 +59,126 @@ public class SessionServiceTest
     {
         var service = new TokenService(AuthenticationService.Object, Logger.Object);
 
-        var session = new Session(service);
+        var count = 5;
+        var loop = 2;
+        var tokens = new List<IToken>(count * loop);
 
-        var token1 = service.GetToken(session);
-        var token2 = service.GetToken(session);
+        for (var i = 0; i < loop; i++)
+            GenerateToken(service, count, tokens);
 
-        Assert.NotNull(token1);
-        Assert.NotNull(token1.SessionId);
-        Assert.NotNull(token1.Cookie);
+        IToken? tokenBefore = null;
+        foreach (var token in tokens)
+        {
+            Assert.NotNull(token);
+            Assert.NotNull(token.SessionId);
+            Assert.NotNull(token.Cookie);
 
-        Assert.NotNull(token2);
-        Assert.NotNull(token2.SessionId);
-        Assert.NotNull(token2.Cookie);
+            if (tokenBefore != null)
+            {
+                Assert.Equal(token, tokenBefore);
+            }
 
-        Assert.Equal(token1, token2);
+            tokenBefore = token;
+        }
+    }
+
+    [Fact]
+    public void GetToken_TimePassed_Test()
+    {
+        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+
+        var count = 5;
+        var loop = 2;
+        var tokens = new List<IToken>(count * loop);
+
+        for (var i = 0; i < loop; i++)
+            GenerateToken(service, count, tokens);
+
+        IToken? tokenBefore = null;
+        foreach (var token in tokens)
+        {
+            Assert.NotNull(token);
+            Assert.NotNull(token.SessionId);
+            Assert.NotNull(token.Cookie);
+
+            if (tokenBefore != null)
+            {
+                Assert.Equal(token, tokenBefore);
+            }
+
+            tokenBefore = token;
+        }
+
+        Thread.Sleep(service.IdleTimeout);
+        Thread.Sleep(1000);
+
+        using var newSession = new Session(service);
+        var newToken = newSession.GetToken();
+
+        Assert.NotNull(newToken);
+        Assert.NotNull(newToken.SessionId);
+        Assert.NotNull(newToken.Cookie);
+
+        Assert.NotEqual(newToken, tokenBefore);
+        Assert.NotEqual(newToken.SessionId, tokenBefore?.SessionId);
+        Assert.NotEqual(newToken.Cookie, tokenBefore?.Cookie);
+    }
+
+    [Fact]
+    public void GetToken_ReleaseToken_401_Test()
+    {
+        var service = new TokenService(AuthenticationService.Object, Logger.Object);
+
+        var count = 5;
+        var tokens = new List<IToken>(count);
+        GenerateToken(service, count, tokens);
+
+        IToken? tokenBefore = null;
+        foreach (var token in tokens)
+        {
+            Assert.NotNull(token);
+            Assert.NotNull(token.SessionId);
+            Assert.NotNull(token.Cookie);
+
+            if (tokenBefore != null)
+            {
+                Assert.Equal(token, tokenBefore);
+            }
+
+            tokenBefore = token;
+        }
+
+        Thread.Sleep(service.IdleTimeout);
+        Thread.Sleep(1000);
+
+        using var newSession = new Session(service);
+        newSession.GetToken();
+        service.ReleaseToken();
+        var newToken = newSession.GetToken();
+
+        Assert.NotNull(newToken);
+        Assert.NotNull(newToken.SessionId);
+        Assert.NotNull(newToken.Cookie);
+
+        Assert.NotEqual(newToken, tokenBefore);
+        Assert.NotEqual(newToken.SessionId, tokenBefore?.SessionId);
+        Assert.NotEqual(newToken.Cookie, tokenBefore?.Cookie);
+    }
+
+    private static void GenerateToken(TokenService service, int count, List<IToken> tokens)
+    {
+        var sessions = new List<ISession>(count);
+
+        for (var i = 0; i < count; i++)
+        {
+            var session = new Session(service);
+            sessions.Add(session);
+            tokens.Add(session.GetToken());
+        }
+
+        foreach (var session in sessions)
+        {
+            session.Dispose();
+        }
     }
 }

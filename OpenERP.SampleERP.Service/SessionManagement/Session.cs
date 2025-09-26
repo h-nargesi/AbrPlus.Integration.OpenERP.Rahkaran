@@ -16,6 +16,11 @@ public class Session : ISession
     
     public IToken Token { get; private set; }
 
+    public IToken GetToken()
+    {
+        return Token ??= _service.GetToken(this);
+    }
+
     public async Task<TResult> TryCall<TResult>(Func<IToken, Task<TResult>> action)
     {
         if (Token == null || Token.IsExpired) 
