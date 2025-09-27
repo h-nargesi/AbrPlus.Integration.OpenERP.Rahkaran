@@ -16,6 +16,11 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
     public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
     private readonly RahkaranErpCompanyConfig config = company.GetCompanyConfig();
 
+    public string[] GetAllIds()
+    {
+        throw new NotImplementedException();
+    }
+
     public IdentityBundle GetBundle(string key)
     {
         try
@@ -107,11 +112,6 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
         {
             repository.DisableTableTracking();
         }
-    }
-
-    public string[] GetAllIds()
-    {
-        throw new NotImplementedException();
     }
 
     public decimal GetCustomerBalance(string customerCode)

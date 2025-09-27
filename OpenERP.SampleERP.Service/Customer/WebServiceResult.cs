@@ -1,5 +1,4 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Dtos;
-using System.Collections.Generic;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
@@ -10,12 +9,12 @@ public class PartyDataSaveResult
     public string[] ValidationErrors { get; set; }
 }
 
-public class PartyByRefDataResult
+public class PartyByRefResponse
 {
     public IdentityDto GetPartyResult { get; set; }
 }
 
-public class FetchPartyDataResult
+public class FetchPartyResponse
 {
     public IdentityDto FetchPartyResult { get; set; }
 }

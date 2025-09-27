@@ -8,10 +8,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 public interface IPartyWebService
 {
     [Post("/PartyByRef")]
-    Task<PartyByRefDataResult> PartyByRef(object key, [Header("Cookie")] string cookie);
+    Task<PartyByRefResponse> PartyByRef(object key, [Header("Cookie")] string cookie);
 
     [Post("/FetchParty")]
-    Task<FetchPartyDataResult> FetchParty(object key, [Header("Cookie")] string cookie);
+    Task<FetchPartyResponse> FetchParty(object key, [Header("Cookie")] string cookie);
 
     [Post("/GenerateParty")]
     Task<PartyDataSaveResult[]> GenerateParty(IdentityDto[] dto, [Header("Cookie")] string cookie);

@@ -1,34 +1,15 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
-using AbrPlus.Integration.OpenERP.SampleERP.Service;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
-using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
-using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
-public class CustomerServiceTest
+public class CustomerServiceTest : BaseServiceTest
 {
-    private readonly Mock<ISampleErpCompanyService> Company = new();
-
-    public CustomerServiceTest()
-    {
-        Company.Setup(x => x.GetCompanyConfig())
-            .Returns(new RahkaranErpCompanyConfig
-            {
-                IdleTimeout = 10,
-                BaseUrl = "http://localhost:2005",
-                Username = "admin",
-                Password = "admin",
-            });
-    }
-
     [Fact]
     public void GetBundle_Test()
     {
-        var authService = new AuthenticationHttpService(Company.Object, Utility.GetLogger<AuthenticationHttpService>());
-        var tokenService = new TokenService(authService, Utility.GetLogger<TokenService>(), Company.Object);
-        using var session = new Session(tokenService);
+        using var session = GetSession(out _);
         var service = new CustomerService(session, null, Company.Object, Utility.GetLogger<CustomerService>());
 
         var result = service.GetBundle("1");
@@ -47,9 +28,7 @@ public class CustomerServiceTest
     [Fact]
     public async Task Save_Test()
     {
-        var authService = new AuthenticationHttpService(Company.Object, Utility.GetLogger<AuthenticationHttpService>());
-        var tokenService = new TokenService(authService, Utility.GetLogger<TokenService>(), Company.Object);
-        using var session = new Session(tokenService);
+        using var session = GetSession(out _);
         var service = new CustomerService(session, null, Company.Object, Utility.GetLogger<CustomerService>());
 
         var identity = new IdentityBundle

@@ -4,6 +4,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
 internal static class Utility
 {
+    public const string RahkaranBaseUrl = "http://localhost:2005";
+    public const string RahkaranUsername = "admin";
+    public const string RahkaranPassword = "admin";
+
     public static ILogger<T> GetLogger<T>()
     {
         var logger = new Mock<ILogger<T>>();
