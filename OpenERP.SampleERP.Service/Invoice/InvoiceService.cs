@@ -12,6 +12,7 @@ public class InvoiceService(ISession session, ISampleErpCompanyService company, 
     : IInvoiceService
 {
     private const string BasePath = "Retail/eSalesApi/ESalesService.svc";
+    private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
     private readonly RahkaranErpCompanyConfig config = company.GetCompanyConfig();
 
     public string[] GetAllIds()
