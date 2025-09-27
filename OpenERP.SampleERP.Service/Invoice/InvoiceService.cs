@@ -11,11 +11,6 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
     private const string BasePath = "Retail/eSalesApi/ESalesService.svc";
     private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
 
-    public string[] GetAllIds()
-    {
-        throw new NotImplementedException();
-    }
-
     public InvoiceBundle GetBundle(string key)
     {
         try
@@ -74,17 +69,22 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
         }
     }
 
+    public bool Validate(InvoiceBundle item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string[] GetAllIds()
+    {
+        throw new NotImplementedException();
+    }
+
     public void SetTrackingStatus(bool enabled)
     {
         throw new NotImplementedException();
     }
 
     public bool SyncWithCrmObjectTypeCode()
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Validate(InvoiceBundle item)
     {
         throw new NotImplementedException();
     }

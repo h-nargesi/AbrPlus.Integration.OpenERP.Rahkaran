@@ -12,11 +12,6 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
 {
     public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
 
-    public string[] GetAllIds()
-    {
-        throw new NotImplementedException();
-    }
-
     public IdentityBundle GetBundle(string key)
     {
         try
@@ -92,6 +87,11 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
     public bool Validate(IdentityBundle item)
     {
         throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
+    }
+
+    public string[] GetAllIds()
+    {
+        throw new NotImplementedException();
     }
 
     public void SetTrackingStatus(bool enabled)
