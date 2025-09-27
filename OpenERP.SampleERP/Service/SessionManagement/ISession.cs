@@ -10,4 +10,6 @@ public interface ISession : IDisposable
     IToken GetToken();
     
     Task<TResult> TryCall<TResult>(Func<IToken, Task<TResult>> action);
+
+    T GetWebService<T>(string basePath);
 }

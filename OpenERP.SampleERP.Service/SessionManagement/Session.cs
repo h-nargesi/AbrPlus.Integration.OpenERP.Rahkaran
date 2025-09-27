@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using AbrPlus.Integration.OpenERP.SampleERP.Settings;
+using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
@@ -8,10 +10,12 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 public class Session : ISession
 {
     private readonly ITokenService _service;
+    private readonly RahkaranErpCompanyConfig _config;
 
-    public Session(ITokenService service)
+    public Session(ITokenService service, ISampleErpCompanyService company)
     {
         _service = service;
+        _config = company.GetCompanyConfig();
         service.MakeTokenGetReady();
     }
     
@@ -46,6 +50,11 @@ public class Session : ISession
                 Token = _service.GetToken(this);
             }
         }
+    }
+
+    public T GetWebService<T>(string basePath)
+    {
+        return RestService.For<T>(_config.BaseUrl + basePath, JsonObjectExtension.RefitSettings);
     }
 
     public void Dispose()

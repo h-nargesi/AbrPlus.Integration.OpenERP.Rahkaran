@@ -1,20 +1,16 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
-using AbrPlus.Integration.OpenERP.SampleERP.Settings;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
-using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
-public class CustomerService(ISession session, ICustomerRepository repository, ISampleErpCompanyService company, ILogger<CustomerService> logger) : ICustomerService
+public class CustomerService(ISession session, ICustomerRepository repository, ILogger<CustomerService> logger) : ICustomerService
 {
     public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
-    private readonly RahkaranErpCompanyConfig config = company.GetCompanyConfig();
 
     public string[] GetAllIds()
     {
@@ -28,10 +24,10 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
             if (!long.TryParse(key, out var partRef))
             {
                 // TODO use custom exception
-                throw new Exception($"Invlid Identity Key: {key}");
+                throw new Exception($"Invalid Identity Key: {key}");
             }
 
-            var service = GetRestService();
+            var service = session.GetWebService<IPartyWebService>(BasePath);
 
             var dto = session.TryCall((token) => service.PartyByRef(new { partRef }, token.Cookie)).Result;
 
@@ -51,7 +47,7 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
 
     public ChangeInfo GetChanges(string lastTrackedVersionStamp)
     {
-        long currentTrackingVersion = repository.GetCurrentTrackingVersion();
+        var currentTrackingVersion = repository.GetCurrentTrackingVersion();
 
         if (long.TryParse(lastTrackedVersionStamp, out var lastTrackedVersion) &&
             currentTrackingVersion == lastTrackedVersion)
@@ -72,7 +68,7 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
     {
         try
         {
-            var service = GetRestService();
+            var service = session.GetWebService<IPartyWebService>(BasePath);
 
             var dto = bundle.ToDto();
 
@@ -82,13 +78,9 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
 
             var messages = result?.FirstOrDefault()?.ValidationErrors;
 
-            if (messages?.Length > 0)
-            {
+            return messages?.Length > 0 ? throw
                 // TODO use custom exception
-                throw new Exception(string.Join('\n', messages));
-            }
-
-            return true;
+                new Exception(string.Join('\n', messages)) : true;
         }
         catch (Exception ex)
         {
@@ -122,10 +114,5 @@ public class CustomerService(ISession session, ICustomerRepository repository, I
     public List<IdentityBalance> GetAllIdentityBalance(IdentityBalanceParams identityBalanceParams)
     {
         throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
-    }
-
-    private IPartyWebService GetRestService()
-    {
-        return RestService.For<IPartyWebService>(config.BaseUrl + BasePath, JsonObjectExtension.RefitSettings);
     }
 }

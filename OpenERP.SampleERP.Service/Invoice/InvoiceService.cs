@@ -1,19 +1,15 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
-using AbrPlus.Integration.OpenERP.SampleERP.Settings;
-using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
-using Refit;
 using System;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
-public class InvoiceService(ISession session, ISampleErpCompanyService company, ILogger<InvoiceService> logger)
+public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
     : IInvoiceService
 {
     private const string BasePath = "Retail/eSalesApi/ESalesService.svc";
     private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
-    private readonly RahkaranErpCompanyConfig config = company.GetCompanyConfig();
 
     public string[] GetAllIds()
     {
@@ -27,10 +23,10 @@ public class InvoiceService(ISession session, ISampleErpCompanyService company, 
             if (!long.TryParse(key, out var id))
             {
                 // TODO use custom exception
-                throw new Exception($"Invlid Invoice Key: {key}");
+                throw new Exception($"Invalid Invoice Key: {key}");
             }
 
-            var service = GetRestService();
+            var service = session.GetWebService<IInvoiceWebService>(BasePath);
 
             var dto = session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie)).Result;
 
@@ -52,9 +48,9 @@ public class InvoiceService(ISession session, ISampleErpCompanyService company, 
     {
         try
         {
-            var service = GetRestService();
+            var service = session.GetWebService<IInvoiceWebService>(BasePath);
 
-            var data = new InvoiceSaveDocument
+            var data = new
             {
                 document = bundle.ToDto()
             };
@@ -91,10 +87,5 @@ public class InvoiceService(ISession session, ISampleErpCompanyService company, 
     public bool Validate(InvoiceBundle item)
     {
         throw new NotImplementedException();
-    }
-
-    private IInvoiceWebService GetRestService()
-    {
-        return RestService.For<IInvoiceWebService>(config.BaseUrl + BasePath, JsonObjectExtension.RefitSettings);
     }
 }

@@ -10,5 +10,5 @@ internal interface IInvoiceWebService
     Task<GetInvoicesResponse> GetInvoiceById(object key, [Header("Cookie")] string cookie);
 
     [Post("Invoice")]
-    Task<SaveInvoiceResponse> SaveInvoice(InvoiceSaveDocument dto, [Header("Cookie")] string cookie);
+    Task<SaveInvoiceResponse> SaveInvoice(object dto, [Header("Cookie")] string cookie);
 }
