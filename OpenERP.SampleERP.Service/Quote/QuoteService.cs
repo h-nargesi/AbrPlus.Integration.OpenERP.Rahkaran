@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote
 {
     public class QuoteService : IQuoteService
     {
