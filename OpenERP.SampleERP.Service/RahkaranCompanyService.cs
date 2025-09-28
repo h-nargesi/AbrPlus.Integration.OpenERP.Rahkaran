@@ -12,30 +12,18 @@ using System;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
 
-public class SampleErpCompanyService : IRahkaranCompanyService
+public class RahkaranCompanyService(ICompanyContext companyContext,
+    IRahkaranCompanyOptionService rahkaranErpCompanyOptionService,
+    IOptions<AppOption> options,
+    IOptions<RahkaranUrlInfo> rahkaranOptions,
+    ILogger<RahkaranCompanyService> logger) : IRahkaranCompanyService
 {
-    private readonly ICompanyContext _companyContext;
-    private readonly IRahkaranCompanyOptionService _rahkaranErpCompanyOptionService;
-    private readonly AppOption _appOptions;
-    private readonly RahkaranUrlInfo _rahkaranOptions;
-    private readonly ILogger<SampleErpCompanyService> _logger;
-
-    public SampleErpCompanyService(ICompanyContext companyContext,
-                                  IRahkaranCompanyOptionService rahkaranErpCompanyOptionService,
-                                  IOptions<AppOption> options,
-                                  IOptions<RahkaranUrlInfo> rahkaranOptions,
-                                  ILogger<SampleErpCompanyService> logger)
-    {
-        _companyContext = companyContext;
-        _rahkaranErpCompanyOptionService = rahkaranErpCompanyOptionService;
-        _appOptions = options.Value;
-        _rahkaranOptions = rahkaranOptions.Value;
-        _logger = logger;
-    }
+    private readonly AppOption _appOptions = options.Value;
+    private readonly RahkaranUrlInfo _rahkaranOptions = rahkaranOptions.Value;
 
     public RahkaranCompanyConfig GetCompanyConfig()
     {
-        var result = _rahkaranErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId)
+        var result = rahkaranErpCompanyOptionService.GetCompanyFlatConfig(companyContext.CompanyId)
             ?? new RahkaranCompanyConfig();
 
         result.BaseUrl ??= _rahkaranOptions.BaseUrl;
@@ -46,9 +34,10 @@ public class SampleErpCompanyService : IRahkaranCompanyService
 
         return result;
     }
+
     public IOptions<ConnectionStringOption> GetConnectionStringOption()
     {
-        var result = _rahkaranErpCompanyOptionService.GetCompanyFlatConfig(_companyContext.CompanyId)
+        var result = rahkaranErpCompanyOptionService.GetCompanyFlatConfig(companyContext.CompanyId)
             ?? new RahkaranCompanyConfig();
 
         return new DbOption
@@ -59,10 +48,12 @@ public class SampleErpCompanyService : IRahkaranCompanyService
             }
         };
     }
+
     public string GetCurrentVersion()
     {
         return "1.0.0";
     }
+
     public bool IsCurrentVersionCompatible()
     {
         try
@@ -75,10 +66,12 @@ public class SampleErpCompanyService : IRahkaranCompanyService
             return false;
         }
     }
+
     public void CheckVersionIsCompatible()
     {
         GetCompatibleVersion();
     }
+
     public bool TryGetCompatibleVersion(out RahkaranVersion compatibleVersion, out string currentVersion)
     {
         currentVersion = GetCurrentVersion();
@@ -99,11 +92,11 @@ public class SampleErpCompanyService : IRahkaranCompanyService
         try
         {
             var version = GetCurrentVersion();
-            _logger.LogDebug($"Instantiating SampleErp repository version {version} for company {_companyContext.CompanyId} ...");
+            logger.LogDebug($"Instantiating SampleErp repository version {version} for company {companyContext.CompanyId} ...");
 
             version = "V" + version.Replace('.', '_');
-            var releaseVersion = version.Substring(0, version.LastIndexOf('_'));
-            var majorVersion = version.Substring(0, version.IndexOf('_'));
+            var releaseVersion = version[..version.LastIndexOf('_')];
+            var majorVersion = version[..version.IndexOf('_')];
 
             RahkaranVersion sampleErpVersion = RahkaranVersion.None;
             RahkaranVersion sampleErpLastVersion = RahkaranVersion.V2_0_0;
@@ -112,7 +105,7 @@ public class SampleErpCompanyService : IRahkaranCompanyService
             {
                 if (_appOptions.UseLatestVersion)
                 {
-                    _logger.LogDebug("Attempting to use latest repository version.");
+                    logger.LogDebug("Attempting to use latest repository version.");
                     sampleErpVersion = sampleErpLastVersion;
                 }
                 else
@@ -146,7 +139,7 @@ public class SampleErpCompanyService : IRahkaranCompanyService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in IsCurrentVersionCompatible");
+            logger.LogError(ex, "Error in IsCurrentVersionCompatible");
             throw;
         }
     }
