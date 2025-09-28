@@ -24,6 +24,6 @@ public abstract class BaseServiceTest
     {
         var authService = new AuthenticationHttpService(Company.Object, Utility.GetLogger<AuthenticationHttpService>());
         tokenService = new TokenService(authService, Utility.GetLogger<TokenService>(), Company.Object);
-        return new Session(tokenService);
+        return new Session(tokenService, Company.Object);
     }
 }

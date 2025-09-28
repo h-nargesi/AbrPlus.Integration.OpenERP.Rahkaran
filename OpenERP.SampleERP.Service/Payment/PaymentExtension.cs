@@ -10,13 +10,13 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
 public static class PaymentExtension
 {
-    private readonly static Dictionary<string, PropertyInfo> PaymentCashMoneysType;
+    private readonly static Dictionary<string, PropertyInfo> PaymentCashMoneyDataType;
     private readonly static Dictionary<string, PropertyInfo> PaymentDepositDataType;
     private readonly static Dictionary<string, PropertyInfo> PaymentPayableChequeDataType;
 
     static PaymentExtension()
     {
-        PaymentCashMoneysType = typeof(PaymentCashMoneyData).GetProperties().ToDictionary(k => k.Name);
+        PaymentCashMoneyDataType = typeof(PaymentCashMoneyData).GetProperties().ToDictionary(k => k.Name);
         PaymentDepositDataType = typeof(PaymentDepositData).GetProperties().ToDictionary(k => k.Name);
         PaymentPayableChequeDataType = typeof(PaymentPayableChequeData).GetProperties().ToDictionary(k => k.Name);
     }
@@ -46,7 +46,7 @@ public static class PaymentExtension
             },
         };
 
-        dto.PaymentCashMoneys.InjectTo('C', PaymentCashMoneysType.Values, properties);
+        dto.PaymentCashMoneys.InjectTo('C', PaymentCashMoneyDataType.Values, properties);
         dto.PaymentDeposits.InjectTo('D', PaymentDepositDataType.Values, properties);
         dto.PaymentPayableCheques.InjectTo('P', PaymentPayableChequeDataType.Values, properties);
 
@@ -55,7 +55,55 @@ public static class PaymentExtension
 
     public static PaymentDto ToDto(this PaymentBundle bundle)
     {
-        throw new NotImplementedException();
+        if (!long.TryParse(bundle.BranchCode, out var branchId))
+        {
+            // TODO use custom exception
+            throw new Exception("Unkonw Branch-ID.");
+        }
+
+        if (!bundle.SettledDate.HasValue)
+        {
+            // TODO use custom exception
+            throw new Exception("The SettledDate is not set.");
+        }
+
+        var dto = new PaymentDto
+        {
+            BranchID = branchId,
+            Description = bundle.Description,
+            Number = bundle.Number,
+            Date = bundle.SettledDate.Value,
+        };
+
+        if (bundle.ExtendedProperties == null) return dto;
+
+        var paymentCashMoneys = new Dictionary<string, PaymentCashMoneyData>();
+        var paymentDeposits = new Dictionary<string, PaymentDepositData>();
+        var paymentPayableCheques = new Dictionary<string, PaymentPayableChequeData>();
+
+        foreach (var prop in bundle.ExtendedProperties)
+        {
+            if (!string.IsNullOrEmpty(prop.Key)) continue;
+
+            switch (prop.Key[0])
+            {
+                case 'C':
+                    PaymentCashMoneyDataType.ReadFrom(prop, paymentCashMoneys);
+                    break;
+                case 'D':
+                    PaymentDepositDataType.ReadFrom(prop, paymentDeposits);
+                    break;
+                case 'P':
+                    PaymentPayableChequeDataType.ReadFrom(prop, paymentPayableCheques);
+                    break;
+            }
+        }
+
+        dto.PaymentCashMoneys = [.. paymentCashMoneys.OrderBy(o => o.Key).Select(c => c.Value)];
+        dto.PaymentDeposits = [.. paymentDeposits.OrderBy(o => o.Key).Select(c => c.Value)];
+        dto.PaymentPayableCheques = [.. paymentPayableCheques.OrderBy(o => o.Key).Select(c => c.Value)];
+
+        return dto;
     }
 
     private static void InjectTo(this object[] sources, char code, IEnumerable<PropertyInfo> props, List<ExtendedProperty> properties)
@@ -77,6 +125,22 @@ public static class PaymentExtension
                 });
             }
             i++;
+        }
+    }
+
+    private static void ReadFrom<T>(this Dictionary<string, PropertyInfo> type, ExtendedProperty prop, Dictionary<string, T> data) where T : class, new()
+    {
+        var keys = prop.Key.Split('_');
+        if (keys.Length != 3) return;
+
+        if (type.TryGetValue(keys[1], out var pType))
+        {
+            if (!data.TryGetValue(keys[2], out var record))
+            {
+                record = new T();
+            }
+
+            pType.SetValue(record, prop.Value);
         }
     }
 }

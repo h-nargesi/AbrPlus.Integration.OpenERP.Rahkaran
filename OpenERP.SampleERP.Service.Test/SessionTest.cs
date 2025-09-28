@@ -2,7 +2,6 @@
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Refit;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
@@ -34,7 +33,7 @@ public class SessionTest
     public void GetToken_Simple_Exception()
     {
         var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
-        using var session = new Session(service);
+        using var session = new Session(service, Company.Object);
 
         var action = () => TryCallWithSimpleException(session);
 
@@ -45,7 +44,7 @@ public class SessionTest
     public void GetToken_Unauthorized_Always_Test()
     {
         var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
-        using var session = new Session(service);
+        using var session = new Session(service, Company.Object);
 
         Action action = () => TryCallWithAlwaysUnauthorizedException(session);
 
@@ -56,7 +55,7 @@ public class SessionTest
     public void GetToken_Unauthorized_Test()
     {
         var service = new TokenService(AuthenticationService.Object, Utility.GetLogger<TokenService>(), Company.Object);
-        using var session = new Session(service);
+        using var session = new Session(service, Company.Object);
 
         var token1 = session.GetToken();
 

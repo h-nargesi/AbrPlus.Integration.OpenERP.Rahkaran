@@ -10,7 +10,7 @@ public class CustomerServiceTest : BaseServiceTest
     public void GetBundle_Test()
     {
         using var session = GetSession(out _);
-        var service = new CustomerService(session, null, Company.Object, Utility.GetLogger<CustomerService>());
+        var service = new CustomerService(session, null, Utility.GetLogger<CustomerService>());
 
         var result = service.GetBundle("1");
 
@@ -29,7 +29,7 @@ public class CustomerServiceTest : BaseServiceTest
     public async Task Save_Test()
     {
         using var session = GetSession(out _);
-        var service = new CustomerService(session, null, Company.Object, Utility.GetLogger<CustomerService>());
+        var service = new CustomerService(session, null, Utility.GetLogger<CustomerService>());
 
         var identity = new IdentityBundle
         {

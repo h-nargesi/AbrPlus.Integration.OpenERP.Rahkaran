@@ -1,7 +1,6 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Service;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using AbrPlus.Integration.OpenERP.SampleERP.Settings;
-using Microsoft.Extensions.Logging;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
@@ -101,7 +100,7 @@ public class SessionServiceTest
 
         Thread.Sleep((1 + Company.Object.GetCompanyConfig().IdleTimeout) * 1000);
 
-        using var newSession = new Session(service);
+        using var newSession = new Session(service, Company.Object);
         var newToken = newSession.GetToken();
 
         Assert.NotNull(newToken);
@@ -139,7 +138,7 @@ public class SessionServiceTest
 
         Thread.Sleep((1 + Company.Object.GetCompanyConfig().IdleTimeout) * 1000);
 
-        using var newSession = new Session(service);
+        using var newSession = new Session(service, Company.Object);
         newSession.GetToken();
         service.ReleaseToken();
         var newToken = newSession.GetToken();
@@ -153,13 +152,13 @@ public class SessionServiceTest
         Assert.NotEqual(newToken.Cookie, tokenBefore?.Cookie);
     }
 
-    private static void GenerateToken(TokenService service, int count, List<IToken> tokens)
+    private void GenerateToken(TokenService service, int count, List<IToken> tokens)
     {
         var sessions = new List<ISession>(count);
 
         for (var i = 0; i < count; i++)
         {
-            var session = new Session(service);
+            var session = new Session(service, Company.Object);
             sessions.Add(session);
             tokens.Add(session.GetToken());
         }
