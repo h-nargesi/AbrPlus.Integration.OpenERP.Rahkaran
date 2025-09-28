@@ -2,6 +2,7 @@
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
@@ -9,7 +10,7 @@ public class PaymentService(ISession session, ILogger<PaymentService> logger) : 
 {
     private const string BasePath = "/ReceiptAndPayment/PaymentManagement/Services/PaymentManagementService.svc";
     
-    public PaymentBundle GetBundle(string key)
+    public Task<PaymentBundle> GetBundle(string key)
     {
         try
         {
@@ -33,18 +34,15 @@ public class PaymentService(ISession session, ILogger<PaymentService> logger) : 
         throw new NotImplementedException();
     }
 
-    public bool Save(PaymentBundle bundle)
+    public async Task<bool> Save(PaymentBundle bundle)
     {
         try
         {
             var service = session.GetWebService<IPaymentWebService>(BasePath);
 
-            var data = new
-            {
-                PaymentData = bundle.ToDto()
-            };
+            var dto = bundle.ToDto();
 
-            var result = session.TryCall((token) => service.RegisterPayment(data, token.Cookie)).Result;
+            var result = await session.TryCall((token) => service.RegisterPayment(dto, token.Cookie));
 
             var messages = result?.ValidationErrors;
 
@@ -68,7 +66,7 @@ public class PaymentService(ISession session, ILogger<PaymentService> logger) : 
         throw new NotSupportedException();
     }
 
-    public string[] GetAllIds()
+    public Task<string[]> GetAllIds()
     {
         throw new NotImplementedException();
     }

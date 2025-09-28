@@ -2,45 +2,33 @@
 using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using AbrPlus.Integration.OpenERP.SampleERP.Service;
 using SeptaKit.DI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Api.Api
+namespace AbrPlus.Integration.OpenERP.SampleERP.Api.Api;
+
+public class ReceiptApi(IReceiptService receiptService) : IReceiptApi, IApi
 {
-    public class ReceiptApi : IReceiptApi, IApi
+    public string[] GetAllIds(int? companyId)
     {
-        private readonly IReceiptService _receiptService;
-        public ReceiptApi(IReceiptService receiptService)
-        {
-            _receiptService = receiptService;
-        }
-
-        public string[] GetAllIds(int? companyId)
-        {
-            return _receiptService.GetAllIds();
-        }
-        public PaymentBundle GetBundle(string key, int? companyId)
-        {
-            return _receiptService.GetBundle(key);
-        }
-        public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
-        {
-            return _receiptService.GetChanges(lastTrackedVersion);
-        }
-        public bool Save(PaymentBundle item, int? companyId)
-        {
-            return _receiptService.Save(item);
-        }
-        public void SetTrackingStatus(bool enabled, int? companyId)
-        {
-            _receiptService.SetTrackingStatus(enabled);
-        }
-        public bool Validate(PaymentBundle item)
-        {
-            return _receiptService.Validate(item);
-        }
+        return receiptService.GetAllIds().Result;
+    }
+    public PaymentBundle GetBundle(string key, int? companyId)
+    {
+        return receiptService.GetBundle(key).Result;
+    }
+    public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
+    {
+        return receiptService.GetChanges(lastTrackedVersion);
+    }
+    public bool Save(PaymentBundle item, int? companyId)
+    {
+        return receiptService.Save(item).Result;
+    }
+    public void SetTrackingStatus(bool enabled, int? companyId)
+    {
+        receiptService.SetTrackingStatus(enabled);
+    }
+    public bool Validate(PaymentBundle item)
+    {
+        return receiptService.Validate(item);
     }
 }

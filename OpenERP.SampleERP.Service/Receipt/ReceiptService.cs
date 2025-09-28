@@ -2,6 +2,7 @@
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
 {
@@ -9,7 +10,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
     {
         private const string BasePath = "/ReceiptAndPayment/ReceiptManagement/Services/ReceiptManagementService.svc";
 
-        public PaymentBundle GetBundle(string key)
+        public Task<PaymentBundle> GetBundle(string key)
         {
             try
             {
@@ -33,7 +34,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
             throw new NotImplementedException();
         }
 
-        public bool Save(PaymentBundle bundle)
+        public async Task<bool> Save(PaymentBundle bundle)
         {
             try
             {
@@ -44,7 +45,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
                     PaymentData = bundle.ToDto()
                 };
 
-                var result = session.TryCall((token) => service.RegisterReceipt(data, token.Cookie)).Result;
+                var result = await session.TryCall((token) => service.RegisterReceipt(data, token.Cookie));
 
                 var messages = result?.ValidationErrors;
 
@@ -68,7 +69,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
             throw new NotImplementedException();
         }
 
-        public string[] GetAllIds()
+        public Task<string[]> GetAllIds()
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,7 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote
 {
@@ -16,12 +17,12 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote
             _logger = logger;
         }
 
-        public string[] GetAllIds()
+        public Task<string[]> GetAllIds()
         {
             throw new NotImplementedException();
         }
 
-        public InvoiceBundle GetBundle(string key)
+        public Task<InvoiceBundle> GetBundle(string key)
         {
             throw new NotImplementedException();
         }
@@ -31,7 +32,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote
             throw new NotImplementedException();
         }
 
-        public bool Save(InvoiceBundle item)
+        public Task<bool> Save(InvoiceBundle item)
         {
             throw new NotImplementedException();
         }

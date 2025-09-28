@@ -7,18 +7,18 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 public class CustomerServiceTest : BaseServiceTest
 {
     [Fact]
-    public void GetBundle_Test()
+    public async Task GetBundle_Test()
     {
         using var session = GetSession(out _);
         var service = new CustomerService(session, null, Utility.GetLogger<CustomerService>());
 
-        var result = service.GetBundle("1");
+        var result = await service.GetBundle("1");
 
         Assert.NotNull(result);
         Assert.Equal("1", result.Id);
         Assert.Equal("کاربر ارشد", result.FirstName);
 
-        result = service.GetBundle("0");
+        result = await service.GetBundle("0");
 
         Assert.NotNull(result);
         Assert.Equal("0", result.Id);
@@ -39,7 +39,7 @@ public class CustomerServiceTest : BaseServiceTest
             Gender = "M",
         };
 
-        var saveResult = service.Save(identity);
+        var saveResult = await service.Save(identity);
 
         Assert.True(saveResult);
 
@@ -51,7 +51,7 @@ public class CustomerServiceTest : BaseServiceTest
         Assert.Equal(identity.FirstName, savedDto.FirstName);
         Assert.Equal(identity.LastName, savedDto.LastName);
 
-        var saved = service.GetBundle(savedDto.ID.ToString());
+        var saved = await service.GetBundle(savedDto.ID.ToString());
 
         Assert.NotNull(saved);
         Assert.Equal(identity.FirstName, saved.FirstName);
@@ -61,11 +61,11 @@ public class CustomerServiceTest : BaseServiceTest
         saved.LastName += "2";
         identity = saved;
 
-        saveResult = service.Save(saved);
+        saveResult = await service.Save(saved);
 
         Assert.True(saveResult);
 
-        saved = service.GetBundle(savedDto.ID.ToString());
+        saved = await service.GetBundle(savedDto.ID.ToString());
 
         Assert.NotNull(saved);
         Assert.Equal(identity.FirstName, saved.FirstName);

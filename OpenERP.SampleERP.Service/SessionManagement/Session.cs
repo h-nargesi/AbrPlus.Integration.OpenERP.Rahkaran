@@ -18,7 +18,7 @@ public class Session : ISession
         _config = company.GetCompanyConfig();
         service.MakeTokenGetReady();
     }
-    
+
     public IToken Token { get; private set; }
 
     public IToken GetToken()
@@ -28,7 +28,7 @@ public class Session : ISession
 
     public async Task<TResult> TryCall<TResult>(Func<IToken, Task<TResult>> action)
     {
-        if (Token == null || Token.IsExpired) 
+        if (Token == null || Token.IsExpired)
             Token = _service.GetToken(this);
 
         var unauthorized = false;
@@ -38,14 +38,14 @@ public class Session : ISession
             {
                 return await action(Token);
             }
-            catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            catch (ApiException ex)
             {
-                if (unauthorized)
+                if (unauthorized || ex.StatusCode != HttpStatusCode.Unauthorized)
                 {
-                    throw;
+                    throw new Exception(ex.Message + "\n" + ex.Content, ex);
                 }
-                
-                unauthorized =  true;
+
+                unauthorized = true;
                 _ = _service.ReleaseToken();
                 Token = _service.GetToken(this);
             }

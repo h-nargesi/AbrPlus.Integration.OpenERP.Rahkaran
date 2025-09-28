@@ -1,40 +1,34 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+
+public class ProductService(ILogger<ProductService> logger) : IProductService
 {
-    public class ProductService : IProductService
+    public Task<ProductBundle> GetBundle(string key)
     {
-        private readonly ILogger<ProductService> _logger;
+        throw new NotImplementedException();
+    }
+    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<bool> Save(ProductBundle item)
+    {
+        throw new NotImplementedException();
+    }
+    public void SetTrackingStatus(bool enabled)
+    {
 
-        public ProductService(ILogger<ProductService> logger)
-        {
-            _logger = logger;
-        }
-        public ProductBundle GetBundle(string key)
-        {
-            throw new NotImplementedException();
-        }
-        public ChangeInfo GetChanges(string lastTrackedVersionStamp)
-        {
-            throw new NotImplementedException();
-        }
-        public bool Save(ProductBundle item)
-        {
-            throw new NotImplementedException();
-        }
-        public void SetTrackingStatus(bool enabled)
-        {
-
-        }
-        public bool Validate(ProductBundle item)
-        {
-            throw new NotImplementedException();
-        }
-        public string[] GetAllIds()
-        {
-            throw new NotImplementedException();
-        }
+    }
+    public bool Validate(ProductBundle item)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<string[]> GetAllIds()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
@@ -12,7 +13,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
 {
     public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
 
-    public IdentityBundle GetBundle(string key)
+    public async Task<IdentityBundle> GetBundle(string key)
     {
         try
         {
@@ -24,7 +25,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
 
             var service = session.GetWebService<IPartyWebService>(BasePath);
 
-            var dto = session.TryCall((token) => service.PartyByRef(new { partRef }, token.Cookie)).Result;
+            var dto = await session.TryCall((token) => service.PartyByRef(new { partRef }, token.Cookie));
 
             return dto.GetPartyResult.ToBundle();
         }
@@ -59,7 +60,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
         //return toReturn;
     }
 
-    public bool Save(IdentityBundle bundle)
+    public async Task<bool> Save(IdentityBundle bundle)
     {
         try
         {
@@ -68,8 +69,8 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
             var dto = bundle.ToDto();
 
             var result = dto.ID > 0 ?
-                session.TryCall((token) => service.EditParty([dto], token.Cookie)).Result :
-                session.TryCall((token) => service.GenerateParty([dto], token.Cookie)).Result;
+                await session.TryCall((token) => service.EditParty([dto], token.Cookie)) :
+                await session.TryCall((token) => service.GenerateParty([dto], token.Cookie));
 
             var messages = result?.FirstOrDefault()?.ValidationErrors;
 
@@ -89,7 +90,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
         throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
     }
 
-    public string[] GetAllIds()
+    public Task<string[]> GetAllIds()
     {
         throw new NotImplementedException();
     }

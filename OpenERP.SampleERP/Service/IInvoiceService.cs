@@ -1,15 +1,15 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+
+public interface IInvoiceService
 {
-    public interface IInvoiceService
-    {
-        string[] GetAllIds();
-        InvoiceBundle GetBundle(string key);
-        ChangeInfo GetChanges(string lastTrackedVersionStamp);
-        bool Save(InvoiceBundle invoice);
-        void SetTrackingStatus(bool enabled);
-        bool SyncWithCrmObjectTypeCode();
-        bool Validate(InvoiceBundle item);
-    }
+    Task<string[]> GetAllIds();
+    Task<InvoiceBundle> GetBundle(string key);
+    ChangeInfo GetChanges(string lastTrackedVersionStamp);
+    Task<bool> Save(InvoiceBundle invoice);
+    void SetTrackingStatus(bool enabled);
+    bool SyncWithCrmObjectTypeCode();
+    bool Validate(InvoiceBundle item);
 }

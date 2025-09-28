@@ -1,20 +1,15 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service;
+
+public interface IQuoteService
 {
-    public interface IQuoteService
-    {
-        string[] GetAllIds();
-        InvoiceBundle GetBundle(string key);
-        ChangeInfo GetChanges(string lastTrackedVersionStamp);
-        bool Save(InvoiceBundle item);
-        void SetTrackingStatus(bool enabled);
-        bool SyncWithCrmObjectTypeCode();
-        bool Validate(InvoiceBundle item);
-    }
+    Task<string[]> GetAllIds();
+    Task<InvoiceBundle> GetBundle(string key);
+    ChangeInfo GetChanges(string lastTrackedVersionStamp);
+    Task<bool> Save(InvoiceBundle item);
+    void SetTrackingStatus(bool enabled);
+    bool SyncWithCrmObjectTypeCode();
+    bool Validate(InvoiceBundle item);
 }

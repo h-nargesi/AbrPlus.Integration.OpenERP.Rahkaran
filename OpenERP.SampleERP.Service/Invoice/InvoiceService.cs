@@ -2,6 +2,7 @@
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
@@ -11,7 +12,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
     private const string BasePath = "Retail/eSalesApi/ESalesService.svc";
     private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
 
-    public InvoiceBundle GetBundle(string key)
+    public async Task<InvoiceBundle> GetBundle(string key)
     {
         try
         {
@@ -23,7 +24,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
 
             var service = session.GetWebService<IInvoiceWebService>(BasePath);
 
-            var dto = session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie)).Result;
+            var dto = await session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie));
 
             return dto.GetInvoiceByIdResult.ToBundle(null);
         }
@@ -39,7 +40,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
         throw new NotImplementedException();
     }
 
-    public bool Save(InvoiceBundle bundle)
+    public async Task<bool> Save(InvoiceBundle bundle)
     {
         try
         {
@@ -50,7 +51,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
                 document = bundle.ToDto()
             };
 
-            var result = session.TryCall((token) => service.SaveInvoice(data, token.Cookie)).Result;
+            var result = await session.TryCall((token) => service.SaveInvoice(data, token.Cookie));
 
             //var messages = result?.FirstOrDefault()?.ValidationErrors;
 
@@ -74,7 +75,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
         throw new NotImplementedException();
     }
 
-    public string[] GetAllIds()
+    public Task<string[]> GetAllIds()
     {
         throw new NotImplementedException();
     }

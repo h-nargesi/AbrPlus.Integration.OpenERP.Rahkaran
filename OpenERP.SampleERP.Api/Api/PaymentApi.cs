@@ -3,39 +3,32 @@ using AbrPlus.Integration.OpenERP.Api.DataContracts;
 using AbrPlus.Integration.OpenERP.SampleERP.Service;
 using SeptaKit.DI;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Api.Api
-{
-    public class PaymentApi : IPaymentApi, IApi
-    {
-        private readonly IPaymentService _paymentService;
-        public PaymentApi(IPaymentService paymentService)
-        {
-            _paymentService = paymentService;
-        }
+namespace AbrPlus.Integration.OpenERP.SampleERP.Api.Api;
 
-        public string[] GetAllIds(int? companyId)
-        {
-            return _paymentService.GetAllIds();
-        }
-        public PaymentBundle GetBundle(string key, int? companyId)
-        {
-            return _paymentService.GetBundle(key);
-        }
-        public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
-        {
-            return _paymentService.GetChanges(lastTrackedVersion);
-        }
-        public bool Save(PaymentBundle item, int? companyId)
-        {
-            return _paymentService.Save(item);
-        }
-        public void SetTrackingStatus(bool enabled, int? companyId)
-        {
-            _paymentService.SetTrackingStatus(enabled);
-        }
-        public bool Validate(PaymentBundle item)
-        {
-            return _paymentService.Validate(item);
-        }
+public class PaymentApi(IPaymentService paymentService) : IPaymentApi, IApi
+{
+    public string[] GetAllIds(int? companyId)
+    {
+        return paymentService.GetAllIds().Result;
+    }
+    public PaymentBundle GetBundle(string key, int? companyId)
+    {
+        return paymentService.GetBundle(key).Result;
+    }
+    public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
+    {
+        return paymentService.GetChanges(lastTrackedVersion);
+    }
+    public bool Save(PaymentBundle item, int? companyId)
+    {
+        return paymentService.Save(item).Result;
+    }
+    public void SetTrackingStatus(bool enabled, int? companyId)
+    {
+        paymentService.SetTrackingStatus(enabled);
+    }
+    public bool Validate(PaymentBundle item)
+    {
+        return paymentService.Validate(item);
     }
 }

@@ -9,12 +9,12 @@ public class InvoiceApi(IInvoiceService invoiceService) : IInvoiceApi, IApi
 {
     public string[] GetAllIds(int? companyId)
     {
-        return invoiceService.GetAllIds();
+        return invoiceService.GetAllIds().Result;
     }
 
     public InvoiceBundle GetBundle(string key, int? companyId)
     {
-        return invoiceService.GetBundle(key);
+        return invoiceService.GetBundle(key).Result;
     }
 
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
@@ -24,7 +24,7 @@ public class InvoiceApi(IInvoiceService invoiceService) : IInvoiceApi, IApi
 
     public bool Save(InvoiceBundle item, int? companyId)
     {
-        return invoiceService.Save(item);
+        return invoiceService.Save(item).Result;
     }
 
     public void SetTrackingStatus(bool enabled, int? companyId)
