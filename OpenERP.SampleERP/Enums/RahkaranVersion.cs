@@ -1,6 +1,6 @@
 ﻿namespace AbrPlus.Integration.OpenERP.SampleERP.Enums
 {
-    public enum SampleErpVersion
+    public enum RahkaranVersion
     {
         None = 0,
         V1_0_0,

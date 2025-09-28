@@ -10,9 +10,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 public class Session : ISession
 {
     private readonly ITokenService _service;
-    private readonly RahkaranErpCompanyConfig _config;
+    private readonly RahkaranCompanyConfig _config;
 
-    public Session(ITokenService service, ISampleErpCompanyService company)
+    public Session(ITokenService service, IRahkaranCompanyService company)
     {
         _service = service;
         _config = company.GetCompanyConfig();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-public class AuthenticationHttpService(ISampleErpCompanyService company, ILogger<AuthenticationHttpService> logger) :
+public class AuthenticationHttpService(IRahkaranCompanyService company, ILogger<AuthenticationHttpService> logger) :
     AuthenticationBaseService(company, logger)
 {
     public override async Task<IToken> Login()

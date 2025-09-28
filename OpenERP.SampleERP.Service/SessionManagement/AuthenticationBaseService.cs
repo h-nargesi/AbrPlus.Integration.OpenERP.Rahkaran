@@ -13,7 +13,7 @@ public abstract class AuthenticationBaseService : IAuthenticationService
     protected readonly string Username;
     protected readonly string Password;
 
-    protected AuthenticationBaseService(ISampleErpCompanyService company, ILogger<AuthenticationBaseService> logger)
+    protected AuthenticationBaseService(IRahkaranCompanyService company, ILogger<AuthenticationBaseService> logger)
     {
         Logger = logger;
 

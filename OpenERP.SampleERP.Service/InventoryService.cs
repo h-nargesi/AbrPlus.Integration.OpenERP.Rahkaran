@@ -8,10 +8,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
 {
     public class InventoryService : IInventoryService
     {
-        private readonly ISampleErpCompanyService _sampleErpCompanyService;
+        private readonly IRahkaranCompanyService _sampleErpCompanyService;
         private readonly ILogger<InventoryService> _logger;
 
-        public InventoryService(ISampleErpCompanyService sampleErpCompanyService,
+        public InventoryService(IRahkaranCompanyService sampleErpCompanyService,
                                 ILogger<InventoryService> logger)
         {
             _sampleErpCompanyService = sampleErpCompanyService;

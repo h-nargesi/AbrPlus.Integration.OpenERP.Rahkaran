@@ -7,12 +7,12 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 public class SessionServiceTest
 {
     private readonly Mock<IAuthenticationService> AuthenticationService = new();
-    private readonly Mock<ISampleErpCompanyService> Company = new();
+    private readonly Mock<IRahkaranCompanyService> Company = new();
 
     public SessionServiceTest()
     {
         Company.Setup(x => x.GetCompanyConfig())
-            .Returns(new RahkaranErpCompanyConfig
+            .Returns(new RahkaranCompanyConfig
             {
                 IdleTimeout = 10,
             });

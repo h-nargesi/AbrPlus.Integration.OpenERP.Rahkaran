@@ -6,10 +6,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote
 {
     public class QuoteService : IQuoteService
     {
-        private readonly ISampleErpCompanyService _sampleErpCompanyService;
+        private readonly IRahkaranCompanyService _sampleErpCompanyService;
         private readonly ILogger<QuoteService> _logger;
 
-        public QuoteService(ISampleErpCompanyService sampleErpCompanyService,
+        public QuoteService(IRahkaranCompanyService sampleErpCompanyService,
                             ILogger<QuoteService> logger)
         {
             _sampleErpCompanyService = sampleErpCompanyService;

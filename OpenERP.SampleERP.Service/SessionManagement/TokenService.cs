@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 
-public class TokenService(IAuthenticationService authService, ILogger<TokenService> logger, ISampleErpCompanyService company) : ITokenService
+public class TokenService(IAuthenticationService authService, ILogger<TokenService> logger, IRahkaranCompanyService company) : ITokenService
 {
     private readonly object _lock = new();
     private readonly HashSet<ISession> _calls = [];

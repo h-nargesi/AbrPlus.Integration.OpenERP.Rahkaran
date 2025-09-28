@@ -2,7 +2,7 @@
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Settings
 {
-    public class RahkaranErpCompanyConfig : BaseFlatCompanyConfig
+    public class RahkaranCompanyConfig : BaseFlatCompanyConfig
     {
         public string BaseUrl { get; set; }
         public string Username { get; set; }

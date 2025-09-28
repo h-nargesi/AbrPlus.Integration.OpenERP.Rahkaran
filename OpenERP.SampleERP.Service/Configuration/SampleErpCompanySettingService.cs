@@ -1,14 +1,14 @@
-﻿using Autofac;
+﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.Helpers;
+using AbrPlus.Integration.OpenERP.SampleERP.Settings;
+using AbrPlus.Integration.OpenERP.Settings;
+using Autofac;
 using Microsoft.Extensions.Logging;
 using SeptaKit.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using AbrPlus.Integration.OpenERP.SampleERP.Settings;
-using AbrPlus.Integration.OpenERP.Settings;
-using AbrPlus.Integration.OpenERP.Helpers;
-using AbrPlus.Integration.OpenERP.Api.DataContracts;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
 {
@@ -25,19 +25,21 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
             _logger = logger;
         }
 
-        public List<SettingValue> GetCompanySetting(int companyId, SampleErpSettingKey settingKey)
+        public List<SettingValue> GetCompanySetting(int companyId, RahkaranErpSettingKey settingKey)
         {
-            using (var scope = _lifetimeScope.BeginLifetimeScopeForCompany(companyId))
-            {
-                switch (settingKey)
-                {
-                    case SampleErpSettingKey.DropdownSetting:
-                        //ToDo: for check
-                        return new List<SettingValue>() { new SettingValue("TestKey1", "TestValue1"), new SettingValue("TestKey2", "TestValue2") };
+            using var scope = _lifetimeScope.BeginLifetimeScopeForCompany(companyId);
 
-                    default:
-                        throw new Exception($"Invalid Setting Key:{settingKey}");
-                }
+            switch (settingKey)
+            {
+                case RahkaranErpSettingKey.RahkaranWebServiceUrl:
+                    //ToDo: for check
+                    return new List<SettingValue>() {
+                            new SettingValue("TestKey1", "TestValue1"),
+                            new SettingValue("TestKey2", "TestValue2")
+                        };
+
+                default:
+                    throw new Exception($"Invalid Setting Key:{settingKey}");
             }
         }
 
@@ -119,7 +121,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
                 return;
             }
 
-            if (Enum.TryParse(config.Key, out SampleErpSettingKey settingKey))
+            if (Enum.TryParse(config.Key, out RahkaranErpSettingKey settingKey))
             {
                 try
                 {

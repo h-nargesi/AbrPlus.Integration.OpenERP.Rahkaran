@@ -33,13 +33,13 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
         {
             using (var scope = _lifetimeScope.BeginLifetimeScopeForCompany(companyId))
             {
-                var companyService = scope.Resolve<ISampleErpCompanyService>();
+                var companyService = scope.Resolve<IRahkaranCompanyService>();
                 var systemInfo = new SystemInfoBundle
                 {
                     Name = "نرم افزار شرکت نمونه",
 
                 };
-                if (companyService.TryGetCompatibleVersion(out SampleErpVersion sampleErpVersion, out string currentVersion))
+                if (companyService.TryGetCompatibleVersion(out RahkaranVersion sampleErpVersion, out string currentVersion))
                 {
                     systemInfo.Version = currentVersion;
                     systemInfo.VersionIsSupported = true;

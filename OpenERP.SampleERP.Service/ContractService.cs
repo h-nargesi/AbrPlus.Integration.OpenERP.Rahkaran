@@ -6,10 +6,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
 {
     public class ContractService : IContractService
     {
-        private readonly ISampleErpCompanyService _sampleErpCompanyService;
+        private readonly IRahkaranCompanyService _sampleErpCompanyService;
         private readonly ILogger<ContractService> _logger;
 
-        public ContractService(ISampleErpCompanyService sampleErpCompanyService,
+        public ContractService(IRahkaranCompanyService sampleErpCompanyService,
                               ILogger<ContractService> logger)
         {
             _sampleErpCompanyService = sampleErpCompanyService;

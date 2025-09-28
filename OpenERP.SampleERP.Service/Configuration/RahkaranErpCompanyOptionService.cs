@@ -5,9 +5,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
 {
     public class RahkaranErpCompanyOptionService(
         IRahkaranErpCompanyOptionStorageService rahkaranErpCompanyOptionStorageService)
-        : IRahkaranErpCompanyOptionService
+        : IRahkaranCompanyOptionService
     {
-        public RahkaranErpCompanyConfig GetCompanyFlatConfig(int companyId)
+        public RahkaranCompanyConfig GetCompanyFlatConfig(int companyId)
         {
             var company = rahkaranErpCompanyOptionStorageService.GetCompanyConfig(companyId) ?? new CompanyConfig()/* empty company. */;
             var settings = rahkaranErpCompanyOptionStorageService.GetFinancialSpecificModel(companyId);
@@ -20,7 +20,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Configuration
             var rakaranWebServiceUrl = settings.RahkaranWebServiceUrl;
             if (rakaranWebServiceUrl != null && rakaranWebServiceUrl.EndsWith('/')) rakaranWebServiceUrl = rakaranWebServiceUrl[..^1];
 
-            return new RahkaranErpCompanyConfig
+            return new RahkaranCompanyConfig
             {
                 ConnectionString = company.ConnecitonString,
                 BaseUrl = rakaranWebServiceUrl,

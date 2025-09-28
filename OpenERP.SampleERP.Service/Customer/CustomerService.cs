@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
-public class CustomerService(ISession session, ICustomerRepository repository, ILogger<CustomerService> logger) : ICustomerService
+public class CustomerService(ISession session, IPartyRepository repository, ILogger<CustomerService> logger) : ICustomerService
 {
     public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
 

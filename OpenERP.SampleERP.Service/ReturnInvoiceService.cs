@@ -6,10 +6,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service
 {
     public class ReturnInvoiceService : IReturnInvoiceService
     {
-        private readonly ISampleErpCompanyService _sampleErpCompanyService;
+        private readonly IRahkaranCompanyService _sampleErpCompanyService;
         private readonly ILogger<ReturnInvoiceService> _logger;
 
-        public ReturnInvoiceService(ISampleErpCompanyService sampleErpCompanyService,
+        public ReturnInvoiceService(IRahkaranCompanyService sampleErpCompanyService,
                                     ILogger<ReturnInvoiceService> logger)
         {
             _sampleErpCompanyService = sampleErpCompanyService;
