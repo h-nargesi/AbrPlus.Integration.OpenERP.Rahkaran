@@ -92,7 +92,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
 
     public Task<string[]> GetAllIds()
     {
-        throw new NotImplementedException();
+        return repository.GetAllIdsAsync();
     }
 
     public void SetTrackingStatus(bool enabled)

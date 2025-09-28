@@ -9,9 +9,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 public class PaymentRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<Payment>(dbContext, loggerFactory), IPaymentRepository
 {
-    public Task<long[]> GetAllIdsAsync()
+    public Task<string[]> GetAllIdsAsync()
     {
-        return _context.Payment.Select(i => i.PaymentId).ToArrayAsync();
+        return _context.Payment.Select(i => i.PaymentId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()

@@ -9,9 +9,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 public class QuotationSLS3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<QuotationSLS3>(dbContext, loggerFactory), IQuotationSLS3Repository
 {
-    public Task<long[]> GetAllIdsAsync()
+    public Task<string[]> GetAllIdsAsync()
     {
-        return _context.QuotationSLS3.Select(i => i.QuotationId).ToArrayAsync();
+        return _context.QuotationSLS3.Select(i => i.QuotationId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()

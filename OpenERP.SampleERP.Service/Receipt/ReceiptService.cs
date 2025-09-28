@@ -1,82 +1,82 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt
+namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt;
+
+public class ReceiptService(ISession session, IReceiptRepository repository, ILogger<ReceiptService> logger) : IReceiptService
 {
-    public class ReceiptService(ISession session, ILogger<ReceiptService> logger) : IReceiptService
+    private const string BasePath = "/ReceiptAndPayment/ReceiptManagement/Services/ReceiptManagementService.svc";
+
+    public Task<PaymentBundle> GetBundle(string key)
     {
-        private const string BasePath = "/ReceiptAndPayment/ReceiptManagement/Services/ReceiptManagementService.svc";
-
-        public Task<PaymentBundle> GetBundle(string key)
+        try
         {
-            try
+            if (!long.TryParse(key, out var id))
             {
-                if (!long.TryParse(key, out var id))
-                {
-                    // TODO use custom exception
-                    throw new Exception($"Invalid Invoice Key: {key}");
-                }
-
-                throw new NotImplementedException();
+                // TODO use custom exception
+                throw new Exception($"Invalid Invoice Key: {key}");
             }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error in ReceiptService.GetBundle");
-                throw;
-            }
-        }
 
-        public ChangeInfo GetChanges(string lastTrackedVersionStamp)
-        {
             throw new NotImplementedException();
         }
-
-        public async Task<bool> Save(PaymentBundle bundle)
+        catch (Exception ex)
         {
-            try
+            logger.LogError(ex, "Error in ReceiptService.GetBundle");
+            throw;
+        }
+    }
+
+    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> Save(PaymentBundle bundle)
+    {
+        try
+        {
+            var service = session.GetWebService<IReceiptWebService>(BasePath);
+
+            var data = new
             {
-                var service = session.GetWebService<IReceiptWebService>(BasePath);
+                PaymentData = bundle.ToDto()
+            };
 
-                var data = new
-                {
-                    PaymentData = bundle.ToDto()
-                };
+            var result = await session.TryCall((token) => service.RegisterReceipt(data, token.Cookie));
 
-                var result = await session.TryCall((token) => service.RegisterReceipt(data, token.Cookie));
+            var messages = result?.ValidationErrors;
 
-                var messages = result?.ValidationErrors;
-
-                if (messages?.Length > 0)
-                {
-                    // TODO use custom exception
-                    throw new Exception(string.Join('\n', messages));
-                }
-
-                return true;
-            }
-            catch (Exception ex)
+            if (messages?.Length > 0)
             {
-                logger.LogError(ex, "Error in InvoiceService.Save");
-                throw;
+                // TODO use custom exception
+                throw new Exception(string.Join('\n', messages));
             }
-        }
 
-        public bool Validate(PaymentBundle item)
+            return true;
+        }
+        catch (Exception ex)
         {
-            throw new NotImplementedException();
+            logger.LogError(ex, "Error in InvoiceService.Save");
+            throw;
         }
+    }
 
-        public Task<string[]> GetAllIds()
-        {
-            throw new NotImplementedException();
-        }
+    public bool Validate(PaymentBundle item)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void SetTrackingStatus(bool enabled)
-        {
+    public Task<string[]> GetAllIds()
+    {
+        return repository.GetAllIdsAsync();
+    }
 
-        }
+    public void SetTrackingStatus(bool enabled)
+    {
+
     }
 }

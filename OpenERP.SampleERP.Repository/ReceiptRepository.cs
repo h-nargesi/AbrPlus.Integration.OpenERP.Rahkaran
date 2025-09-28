@@ -9,9 +9,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 public class ReceiptRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<Receipt>(dbContext, loggerFactory), IReceiptRepository
 {
-    public Task<long[]> GetAllIdsAsync()
+    public Task<string[]> GetAllIdsAsync()
     {
-        return _context.Receipt.Select(i => i.ReceiptId).ToArrayAsync();
+        return _context.Receipt.Select(i => i.ReceiptId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()

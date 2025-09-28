@@ -9,9 +9,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 public class SalesOrderRMS3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<SalesOrderRMS3>(dbContext, loggerFactory), ISalesOrderRMS3Repository
 {
-    public Task<long[]> GetAllIdsAsync()
+    public Task<string[]> GetAllIdsAsync()
     {
-        return _context.SalesOrderRMS3.Select(i => i.SalesOrderId).ToArrayAsync();
+        return _context.SalesOrderRMS3.Select(i => i.SalesOrderId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()

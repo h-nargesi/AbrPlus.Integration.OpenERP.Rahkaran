@@ -1,4 +1,5 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
@@ -6,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
-public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
+public class InvoiceService(ISession session, IInvoiceSLS3Repository repository, ILogger<InvoiceService> logger)
     : IInvoiceService
 {
-    private const string BasePath = "Retail/eSalesApi/ESalesService.svc";
+    private const string BasePathRms = "Retail/eSalesApi/ESalesService.svc";
     private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
 
     public async Task<InvoiceBundle> GetBundle(string key)
@@ -22,7 +23,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
                 throw new Exception($"Invalid Invoice Key: {key}");
             }
 
-            var service = session.GetWebService<IInvoiceWebService>(BasePath);
+            var service = session.GetWebService<IInvoiceWebService>(BasePathRms);
 
             var dto = await session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie));
 
@@ -44,7 +45,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
     {
         try
         {
-            var service = session.GetWebService<IInvoiceWebService>(BasePath);
+            var service = session.GetWebService<IInvoiceWebService>(BasePathRms);
 
             var data = new
             {
@@ -77,7 +78,7 @@ public class InvoiceService(ISession session, ILogger<InvoiceService> logger)
 
     public Task<string[]> GetAllIds()
     {
-        throw new NotImplementedException();
+        return repository.GetAllIdsAsync();
     }
 
     public void SetTrackingStatus(bool enabled)

@@ -1,4 +1,5 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using Microsoft.Extensions.Logging;
 using System;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
-public class PaymentService(ISession session, ILogger<PaymentService> logger) : IPaymentService
+public class PaymentService(ISession session, IPaymentRepository repository, ILogger<PaymentService> logger) : IPaymentService
 {
     private const string BasePath = "/ReceiptAndPayment/PaymentManagement/Services/PaymentManagementService.svc";
     
@@ -68,7 +69,7 @@ public class PaymentService(ISession session, ILogger<PaymentService> logger) : 
 
     public Task<string[]> GetAllIds()
     {
-        throw new NotImplementedException();
+        return repository.GetAllIdsAsync();
     }
 
     public void SetTrackingStatus(bool enabled)

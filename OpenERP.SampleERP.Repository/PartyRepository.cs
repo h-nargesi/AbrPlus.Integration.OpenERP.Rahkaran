@@ -9,9 +9,9 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 public class PartyRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<Party>(dbContext, loggerFactory), IPartyRepository
 {
-    public Task<long[]> GetAllIdsAsync()
+    public Task<string[]> GetAllIdsAsync()
     {
-        return _context.Party.Select(i => i.PartyId).ToArrayAsync();
+        return _context.Party.Select(i => i.PartyId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()
