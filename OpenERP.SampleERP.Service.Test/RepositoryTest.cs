@@ -5,20 +5,10 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
 public class RepositoryTest : BaseServiceTest
 {
-    private readonly ILoggerFactory LoggerFactory;
-
-    public RepositoryTest()
-    {
-        LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole().SetMinimumLevel(LogLevel.Information);
-        });
-    }
-
     [Fact]
     public async Task InvoiceRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new InvoiceRMS3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new InvoiceRms3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
 
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
@@ -34,7 +24,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task InvoiceSLS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new InvoiceSLS3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new InvoiceSls3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
 
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
@@ -96,7 +86,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task QuotationSLS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new QuotationSLS3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new QuotationSls3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -126,7 +116,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task SalesOrderRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new SalesOrderRMS3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new SalesOrderRms3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 

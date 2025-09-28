@@ -8,8 +8,8 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Models;
 public class Party : BaseEntity
 {
     [Key]
-    public long PartyId { get; set; }
+    public long PartyId { get; init; }
 
     [Timestamp]
-    public byte[] Version { get; set; }
+    public byte[] Version { get; init; }
 }

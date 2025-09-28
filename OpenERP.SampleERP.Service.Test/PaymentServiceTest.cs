@@ -1,4 +1,6 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Dtos;
+using AbrPlus.Integration.OpenERP.SampleERP.Models;
+using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
@@ -9,7 +11,9 @@ public class PaymentServiceTest : BaseServiceTest
     public async Task Save_Test()
     {
         using var session = GetSession(out _);
-        var service = new PaymentService(session, Utility.GetLogger<PaymentService>());
+        var service = new PaymentService(session, 
+            GenerateRepository<PaymentRepository, Payment>(), 
+            Utility.GetLogger<PaymentService>());
 
         var payment = new PaymentDto
         {

@@ -8,8 +8,8 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Models;
 public class Payment : BaseEntity
 {
     [Key]
-    public long PaymentId { get; set; }
+    public long PaymentId { get; init; }
 
     [Timestamp]
-    public byte[] Version { get; set; }
+    public byte[] Version { get; init; }
 }

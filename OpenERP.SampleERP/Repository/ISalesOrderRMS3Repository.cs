@@ -3,6 +3,6 @@ using AbrPlus.Integration.OpenERP.SampleERP.Models;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
-public interface ISalesOrderRMS3Repository : IBaseOpenErpApiRepository<SalesOrderRMS3>, IGenericRepository, ITrackingSupportRepository
+public interface ISalesOrderRMS3Repository : IBaseOpenErpApiRepository<SalesOrderRms3>, IGenericRepository, ITrackingSupportRepository
 {
 }

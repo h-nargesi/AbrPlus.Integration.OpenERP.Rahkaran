@@ -1,7 +1,10 @@
-﻿using AbrPlus.Integration.OpenERP.SampleERP.Service;
+﻿using AbrPlus.Integration.OpenERP.SampleERP.Repository;
+using AbrPlus.Integration.OpenERP.SampleERP.Service;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
 using AbrPlus.Integration.OpenERP.SampleERP.Settings;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using SeptaKit.Models;
 using SeptaKit.Repository;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
@@ -9,6 +12,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 public abstract class BaseServiceTest
 {
     protected readonly Mock<IRahkaranCompanyService> Company = new();
+    protected readonly ILoggerFactory LoggerFactory;
 
     protected BaseServiceTest()
     {
@@ -29,6 +33,11 @@ public abstract class BaseServiceTest
                     ConnectionString = "Data Source=MISVDIDB6\\SQL2022;Initial Catalog=Pakshuma;Integrated Security=False;User ID=sa;Password=abc.123456;Encrypt=False;",
                 }
             });
+        
+        LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole().SetMinimumLevel(LogLevel.Information);
+        });
     }
 
     protected Session GetSession(out TokenService tokenService)
@@ -38,8 +47,17 @@ public abstract class BaseServiceTest
         return new Session(tokenService, Company.Object);
     }
 
+    protected TRepo? GenerateRepository<TRepo, T>() where TRepo : BaseRahkaranRepository<T> where T : BaseEntity
+    {
+        return Activator.CreateInstance(
+            typeof(TRepo),
+            new RahkaranDbContext(Company.Object, LoggerFactory),
+            LoggerFactory
+        ) as TRepo;
+    }
+
     private class DbOption : IOptions<ConnectionStringOption>
     {
-        public ConnectionStringOption Value { get; set; } = null!;
+        public ConnectionStringOption Value { get; init; } = null!;
     }
 }

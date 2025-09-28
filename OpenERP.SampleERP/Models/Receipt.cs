@@ -8,8 +8,8 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Models;
 public class Receipt : BaseEntity
 {
     [Key]
-    public long ReceiptId { get; set; }
+    public long ReceiptId { get; init; }
 
     [Timestamp]
-    public byte[] Version { get; set; }
+    public byte[] Version { get; init; }
 }

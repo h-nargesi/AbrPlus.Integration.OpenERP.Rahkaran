@@ -146,6 +146,6 @@ public class RahkaranCompanyService(ICompanyContext companyContext,
 
     private class DbOption : IOptions<ConnectionStringOption>
     {
-        public ConnectionStringOption Value { get; set; }
+        public ConnectionStringOption Value { get; init; } = null!;
     }
 }

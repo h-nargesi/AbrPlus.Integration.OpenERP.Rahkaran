@@ -8,8 +8,8 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Models;
 public class Product : BaseEntity
 {
     [Key]
-    public long ProductId { get; set; }
+    public long ProductId { get; init; }
 
     [Timestamp]
-    public byte[] Version { get; set; }
+    public byte[] Version { get; init; }
 }
