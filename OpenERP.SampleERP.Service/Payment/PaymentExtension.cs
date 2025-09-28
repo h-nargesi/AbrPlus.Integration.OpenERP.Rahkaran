@@ -3,6 +3,7 @@ using AbrPlus.Integration.OpenERP.SampleERP.Dtos;
 using SeptaKit.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -50,6 +51,8 @@ public static class PaymentExtension
         dto.PaymentDeposits.InjectTo('D', PaymentDepositDataType.Values, properties);
         dto.PaymentPayableCheques.InjectTo('P', PaymentPayableChequeDataType.Values, properties);
 
+        bundle.ExtendedProperties = [.. properties];
+
         return bundle;
     }
 
@@ -83,7 +86,7 @@ public static class PaymentExtension
 
         foreach (var prop in bundle.ExtendedProperties)
         {
-            if (!string.IsNullOrEmpty(prop.Key)) continue;
+            if (string.IsNullOrEmpty(prop.Key)) continue;
 
             switch (prop.Key[0])
             {
@@ -137,10 +140,53 @@ public static class PaymentExtension
         {
             if (!data.TryGetValue(keys[2], out var record))
             {
-                record = new T();
+                data.Add(keys[2], record = new T());
             }
 
-            pType.SetValue(record, prop.Value);
+            pType.SetValue(record, pType.PropertyType.ConvertValue(prop.Value));
         }
     }
+
+    private static object ConvertValue(this Type type, string value)
+    {
+        if (type == null || value == null) return null;
+
+        var targetType = Nullable.GetUnderlyingType(type) ?? type;
+
+        if (targetType.IsEnum)
+        {
+            return Enum.Parse(targetType, value, ignoreCase: true);
+        }
+        else if (targetType == typeof(Guid))
+        {
+            return Guid.Parse(value);
+        }
+        else if (targetType == typeof(DateTime))
+        {
+
+            if (DateTime.TryParseExact(value, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var datetime))
+            {
+                return datetime;
+            }
+            else
+            {
+                return DateTime.Parse(value, CultureInfo.InvariantCulture);
+            }
+        }
+        else
+        {
+            return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+        }
+    }
+
+    private readonly static string[] DateFormats =
+    [
+        "yyyy-MM-dd",
+        "yyyy/MM/dd",
+        "MM/dd/yyyy",
+        "dd.MM.yyyy",
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy/MM/dd HH:mm:ss",
+        "o" // ISO 8601
+    ];
 }

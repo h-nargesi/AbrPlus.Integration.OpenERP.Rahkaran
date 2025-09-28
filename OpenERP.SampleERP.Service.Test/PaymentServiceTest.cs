@@ -31,6 +31,6 @@ public class PaymentServiceTest : BaseServiceTest
 
         var result = await service.Save(payment.ToBundle());
 
-        Assert.False(result);
+        Assert.True(result);
     }
 }
