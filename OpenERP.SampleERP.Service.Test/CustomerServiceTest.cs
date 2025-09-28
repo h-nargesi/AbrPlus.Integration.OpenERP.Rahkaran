@@ -30,11 +30,12 @@ public class CustomerServiceTest : BaseServiceTest
     {
         using var session = GetSession(out _);
         var service = new CustomerService(session, null, Utility.GetLogger<CustomerService>());
+        var guid = Guid.NewGuid();
 
         var identity = new IdentityBundle
         {
-            FirstName = "f1",
-            LastName = "l1",
+            FirstName = $"f1{guid}",
+            LastName = $"l1{guid}",
             Gender = "M",
         };
 
