@@ -4,7 +4,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
 public class GetInvoicesResponse
 {
-    public InvoiceDto GetInvoiceByIdResult { get; set; }
+    public InvoiceRmsDto GetInvoiceByIdResult { get; set; }
 }
 
 public class SaveInvoiceResponse

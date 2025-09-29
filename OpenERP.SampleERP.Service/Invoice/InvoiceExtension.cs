@@ -7,7 +7,7 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
 internal static class InvoiceExtension
 {
-    public static InvoiceBundle ToBundle(this InvoiceDto dto, IdentityBundle identity)
+    public static InvoiceBundle ToBundle(this InvoiceRmsDto dto, IdentityBundle identity)
     {
         var bundle = new InvoiceBundle
         {
@@ -43,7 +43,7 @@ internal static class InvoiceExtension
         return bundle;
     }
 
-    public static InvoiceDto ToDto(this InvoiceBundle bundle)
+    public static InvoiceRmsDto ToDto(this InvoiceBundle bundle)
     {
         if (!long.TryParse(bundle.Customer?.Id, out var customerRef))
         {
@@ -63,7 +63,7 @@ internal static class InvoiceExtension
             throw new Exception("Invalid InvoiceType");
         }
 
-        var dto = new InvoiceDto
+        var dto = new InvoiceRmsDto
         {
             CustomerId = customerRef,
             Description = bundle.Description,

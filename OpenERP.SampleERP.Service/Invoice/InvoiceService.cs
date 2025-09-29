@@ -22,7 +22,7 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
 
             var service = session.GetWebService<IInvoiceWebService>(IInvoiceWebService.BasePathRms);
 
-            var dto = await session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie));
+            var dto = await session.TryCall((token) => service.GetInvoiceById(id, token.Cookie));
 
             return dto.GetInvoiceByIdResult.ToBundle(null);
         }
