@@ -9,8 +9,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt;
 
 public class ReceiptService(ISession session, IReceiptRepository repository, ILogger<ReceiptService> logger) : IReceiptService
 {
-    private const string BasePath = "/ReceiptAndPayment/ReceiptManagement/Services/ReceiptManagementService.svc";
-
     public Task<PaymentBundle> GetBundle(string key)
     {
         try
@@ -39,7 +37,7 @@ public class ReceiptService(ISession session, IReceiptRepository repository, ILo
     {
         try
         {
-            var service = session.GetWebService<IReceiptWebService>(BasePath);
+            var service = session.GetWebService<IReceiptWebService>(IReceiptWebService.BasePath);
 
             var data = new
             {

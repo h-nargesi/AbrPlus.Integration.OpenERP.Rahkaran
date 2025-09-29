@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Dtos;
 
-public class InvoiceDto
+public class InvoiceRmsDto
 {
     public DateTime DateTime { get; set; }
     public long CustomerId { get; set; }

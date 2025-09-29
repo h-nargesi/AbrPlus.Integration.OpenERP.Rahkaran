@@ -7,6 +7,8 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 [Headers("Content-Type: application/json")]
 public interface IPartyWebService
 {
+    public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
+
     [Post("/PartyByRef")]
     Task<PartyByRefResponse> PartyByRef(object key, [Header("Cookie")] string cookie);
 
