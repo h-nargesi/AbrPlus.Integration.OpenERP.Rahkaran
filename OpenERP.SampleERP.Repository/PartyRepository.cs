@@ -1,33 +1,13 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Collections;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
 public class PartyRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
     BaseRahkaranRepository<Party>(dbContext, loggerFactory), IPartyRepository
 {
-    public Task<string[]> GetAllIdsAsync()
-    {
-        return _context.Party.Select(i => i.PartyId.ToString()).ToArrayAsync();
-    }
+    protected override DbSet<Party> EntityDbSet => _context.Party;
 
-    public async Task<byte[]> GetMaxRowVersionAsync()
-    {
-        return await _context.Party
-            .OrderByDescending(x => x.Version)
-            .Select(x => x.Version)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task<long[]> GetLastChangesAsync(byte[] timestamp)
-    {
-        return await _context.Party
-            .Where(x => StructuralComparisons.StructuralComparer.Compare(x.Version, timestamp) > 0)
-            .Select(x => x.PartyId)
-            .ToArrayAsync();
-    }
+    protected override string EntityName => "%General.PartyManagement/شخص/شرکت%";
 }

@@ -16,25 +16,34 @@ public class ServiceBase(IGenericRepository repository)
 
     public async Task<ChangeInfo> GetChanges(string lastTrackedVersionStamp)
     {
-        var currentTrackingVersion = await repository.GetMaxRowVersionAsync();
-        var currentTrackingVersionStamp = currentTrackingVersion.TimestampToString();
+        var currentTrackingStamp = await repository.GetMaxRowVersionAsync();
 
-        if (currentTrackingVersionStamp == lastTrackedVersionStamp)
+        if (currentTrackingStamp == lastTrackedVersionStamp)
         {
             return new ChangeInfo() { LastTrackedVersion = lastTrackedVersionStamp };
         }
 
-        var changedId = await repository.GetLastChangesAsync(lastTrackedVersionStamp.ToTimestamp());
+        var lastTrackedVersionStampParts = lastTrackedVersionStamp.Split('|');
 
-        var changeDetails = changedId.Select(id => new ChangeDetail
+        var changedIds = repository.GetLastChangesAsync(lastTrackedVersionStampParts[1].ToTimestamp());
+
+        var deletedIds = repository.GetLastDeletedIdsAsync(long.Parse(lastTrackedVersionStampParts[0]));
+
+        var changeDetails = (await changedIds).Select(id => new ChangeDetail
         {
             Action = ActionType.Update, // TODO seperate insert/update
             Id = id.ToString(),
         });
 
+        changeDetails = changeDetails.Union((await deletedIds).Select(id => new ChangeDetail
+        {
+            Action = ActionType.Delete,
+            Id = id,
+        }));
+
         var changeInfo = new ChangeInfo()
         {
-            LastTrackedVersion = currentTrackingVersionStamp,
+            LastTrackedVersion = currentTrackingStamp,
             Changes = [.. changeDetails],
         };
 

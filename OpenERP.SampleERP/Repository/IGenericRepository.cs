@@ -6,7 +6,9 @@ public interface IGenericRepository
 {
     Task<string[]> GetAllIdsAsync();
 
-    Task<byte[]> GetMaxRowVersionAsync();
+    Task<string> GetMaxRowVersionAsync();
 
     Task<long[]> GetLastChangesAsync(byte[] timestamp);
+
+    Task<string[]> GetLastDeletedIdsAsync(long lastSeen);
 }

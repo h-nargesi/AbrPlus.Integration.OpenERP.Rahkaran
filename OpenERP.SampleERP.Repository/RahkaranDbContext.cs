@@ -12,7 +12,7 @@ public partial class RahkaranDbContext(IRahkaranCompanyService company, ILoggerF
 {
     public virtual DbSet<InvoiceRms> InvoiceRms { get; set; }
 
-    public virtual DbSet<InvoiceSls> InvoiceSls3 { get; set; }
+    public virtual DbSet<InvoiceSls> InvoiceSls { get; set; }
 
     public virtual DbSet<Party> Party { get; set; }
 
@@ -20,11 +20,11 @@ public partial class RahkaranDbContext(IRahkaranCompanyService company, ILoggerF
 
     public virtual DbSet<Product> Product { get; set; }
 
-    public virtual DbSet<QuotationSls> QuotationSls3 { get; set; }
+    public virtual DbSet<QuotationSls> QuotationSls { get; set; }
 
     public virtual DbSet<Receipt> Receipt { get; set; }
 
-    public virtual DbSet<SalesOrderRms> SalesOrderRms3 { get; set; }
+    public virtual DbSet<SalesOrderRms> SalesOrderRms { get; set; }
 
     protected override string MigrationTableSchema => "dbo";
     protected override string MigrationTableName => "__RahkaranMigrationHistory";

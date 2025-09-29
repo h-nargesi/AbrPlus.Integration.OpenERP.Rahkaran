@@ -7,7 +7,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task InvoiceRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new InvoiceRmsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new InvoiceRmsRepository(dbContext, LoggerFactory);
 
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
@@ -27,7 +28,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task InvoiceSLS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new InvoiceSls3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new InvoiceSls3Repository(dbContext, LoggerFactory);
 
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
@@ -48,7 +50,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task PartyRepository_GetAllIds_RowVersion()
     {
-        var repo = new PartyRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new PartyRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -67,7 +70,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task PartyRepository_GetLastChanges()
     {
-        var repo = new PartyRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new PartyRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -86,7 +90,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task PaymentRepository_GetAllIds_RowVersion()
     {
-        var repo = new PaymentRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new PaymentRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -105,7 +110,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task ProductRepository_GetAllIds_RowVersion()
     {
-        var repo = new ProductRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new ProductRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -124,7 +130,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task QuotationSLS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new QuotationSlsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new QuotationSlsRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -143,7 +150,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task ReceiptRepository_GetAllIds_RowVersion()
     {
-        var repo = new ReceiptRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new ReceiptRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -162,7 +170,8 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task SalesOrderRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new SalesOrderRmsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        using var dbContext = new RahkaranDbContext(Company.Object, LoggerFactory);
+        var repo = new SalesOrderRmsRepository(dbContext, LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
