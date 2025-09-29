@@ -40,9 +40,14 @@ public class Session : ISession
             }
             catch (ApiException ex)
             {
-                if (unauthorized || ex.StatusCode != HttpStatusCode.Unauthorized)
+                if (ex.StatusCode != HttpStatusCode.Unauthorized)
                 {
                     throw new Exception(ex.Message + "\n" + ex.Content, ex);
+                }
+
+                if (unauthorized)
+                {
+                    throw;
                 }
 
                 unauthorized = true;
