@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
-public class QuotationSls3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
-    BaseRahkaranRepository<QuotationSls3>(dbContext, loggerFactory), IQuotationSLS3Repository
+public class QuotationSlsRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
+    BaseRahkaranRepository<QuotationSls>(dbContext, loggerFactory), IQuotationSlsRepository
 {
     public Task<string[]> GetAllIdsAsync()
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
 public class InvoiceSls3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
-    BaseRahkaranRepository<InvoiceSls3>(dbContext, loggerFactory), IInvoiceSLS3Repository
+    BaseRahkaranRepository<InvoiceSls>(dbContext, loggerFactory), IInvoiceSLS3Repository
 {
     public Task<string[]> GetAllIdsAsync()
     {

@@ -86,7 +86,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task QuotationSLS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new QuotationSls3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new QuotationSlsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 
@@ -116,7 +116,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task SalesOrderRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new SalesOrderRms3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new SalesOrderRmsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);
 

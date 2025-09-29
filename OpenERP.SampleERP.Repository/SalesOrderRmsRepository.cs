@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
-public class SalesOrderRms3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
-    BaseRahkaranRepository<SalesOrderRms3>(dbContext, loggerFactory), ISalesOrderRMS3Repository
+public class SalesOrderRmsRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
+    BaseRahkaranRepository<SalesOrderRms>(dbContext, loggerFactory), ISalesOrderRMS3Repository
 {
     public Task<string[]> GetAllIdsAsync()
     {

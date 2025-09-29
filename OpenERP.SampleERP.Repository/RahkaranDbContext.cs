@@ -10,9 +10,9 @@ public partial class RahkaranDbContext(IRahkaranCompanyService company, ILoggerF
     BaseSqlServerDbContext<RahkaranDbContext>(company.GetConnectionStringOption(), loggerFactory),
     IRahkaranDbContext
 {
-    public virtual DbSet<InvoiceRms3> InvoiceRms { get; set; }
+    public virtual DbSet<InvoiceRms> InvoiceRms { get; set; }
 
-    public virtual DbSet<InvoiceSls3> InvoiceSls3 { get; set; }
+    public virtual DbSet<InvoiceSls> InvoiceSls3 { get; set; }
 
     public virtual DbSet<Party> Party { get; set; }
 
@@ -20,11 +20,11 @@ public partial class RahkaranDbContext(IRahkaranCompanyService company, ILoggerF
 
     public virtual DbSet<Product> Product { get; set; }
 
-    public virtual DbSet<QuotationSls3> QuotationSls3 { get; set; }
+    public virtual DbSet<QuotationSls> QuotationSls3 { get; set; }
 
     public virtual DbSet<Receipt> Receipt { get; set; }
 
-    public virtual DbSet<SalesOrderRms3> SalesOrderRms3 { get; set; }
+    public virtual DbSet<SalesOrderRms> SalesOrderRms3 { get; set; }
 
     protected override string MigrationTableSchema => "dbo";
     protected override string MigrationTableName => "__RahkaranMigrationHistory";

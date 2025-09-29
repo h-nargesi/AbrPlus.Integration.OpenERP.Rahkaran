@@ -3,6 +3,6 @@ using AbrPlus.Integration.OpenERP.SampleERP.Models;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
-public interface IInvoiceRmsRepository : IBaseOpenErpApiRepository<InvoiceRms3>, IGenericRepository, ITrackingSupportRepository
+public interface IInvoiceRmsRepository : IBaseOpenErpApiRepository<InvoiceRms>, IGenericRepository, ITrackingSupportRepository
 {
 }

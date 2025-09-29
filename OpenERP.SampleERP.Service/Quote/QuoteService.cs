@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote;
 
-public class QuoteService(ISession session, IQuotationSLS3Repository repository, ILogger<QuoteService> logger) : IQuoteService
+public class QuoteService(ISession session, IQuotationSlsRepository repository, ILogger<QuoteService> logger) : IQuoteService
 {
     public Task<InvoiceBundle> GetBundle(string key)
     {

@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Models;
 
-[Table("SalesOrder", Schema = "RMS3")]
-public class SalesOrderRms3 : BaseEntity
+[Table("Invoice", Schema = "SLS3")]
+public class InvoiceSls : BaseEntity
 {
     [Key]
-    public long SalesOrderId { get; init; }
+    public long InvoiceId { get; init; }
 
     [Timestamp]
     public byte[] Version { get; init; }
