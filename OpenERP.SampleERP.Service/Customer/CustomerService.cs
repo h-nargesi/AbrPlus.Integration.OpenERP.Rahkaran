@@ -11,8 +11,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
 public class CustomerService(ISession session, IPartyRepository repository, ILogger<CustomerService> logger) : ICustomerService
 {
-    public const string BasePath = "/General/PartyManagement/Services/PartyService.svc";
-
     public async Task<IdentityBundle> GetBundle(string key)
     {
         try
@@ -23,7 +21,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
                 throw new Exception($"Invalid Identity Key: {key}");
             }
 
-            var service = session.GetWebService<IPartyWebService>(BasePath);
+            var service = session.GetWebService<IPartyWebService>(IPartyWebService.BasePath);
 
             var dto = await session.TryCall((token) => service.PartyByRef(new { partRef }, token.Cookie));
 
@@ -64,7 +62,7 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
     {
         try
         {
-            var service = session.GetWebService<IPartyWebService>(BasePath);
+            var service = session.GetWebService<IPartyWebService>(IPartyWebService.BasePath);
 
             var dto = bundle.ToDto();
 

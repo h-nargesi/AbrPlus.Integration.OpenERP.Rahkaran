@@ -10,9 +10,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 public class InvoiceService(ISession session, IInvoiceSLS3Repository repository, ILogger<InvoiceService> logger)
     : IInvoiceService
 {
-    private const string BasePathRms = "Retail/eSalesApi/ESalesService.svc";
-    private const string BasePathSls = "Services/Sales/InvoiceManagementService.svc";
-
     public async Task<InvoiceBundle> GetBundle(string key)
     {
         try
@@ -23,7 +20,7 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
                 throw new Exception($"Invalid Invoice Key: {key}");
             }
 
-            var service = session.GetWebService<IInvoiceWebService>(BasePathRms);
+            var service = session.GetWebService<IInvoiceWebService>(IInvoiceWebService.BasePathRms);
 
             var dto = await session.TryCall((token) => service.GetInvoiceById(new { id }, token.Cookie));
 
@@ -45,7 +42,7 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
     {
         try
         {
-            var service = session.GetWebService<IInvoiceWebService>(BasePathRms);
+            var service = session.GetWebService<IInvoiceWebService>(IInvoiceWebService.BasePathRms);
 
             var data = new
             {

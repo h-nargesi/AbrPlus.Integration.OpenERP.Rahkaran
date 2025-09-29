@@ -9,8 +9,6 @@ namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
 public class PaymentService(ISession session, IPaymentRepository repository, ILogger<PaymentService> logger) : IPaymentService
 {
-    private const string BasePath = "/ReceiptAndPayment/PaymentManagement/Services/PaymentManagementService.svc";
-    
     public Task<PaymentBundle> GetBundle(string key)
     {
         try
@@ -39,7 +37,7 @@ public class PaymentService(ISession session, IPaymentRepository repository, ILo
     {
         try
         {
-            var service = session.GetWebService<IPaymentWebService>(BasePath);
+            var service = session.GetWebService<IPaymentWebService>(IPaymentWebService.BasePath);
 
             var dto = bundle.ToDto();
 
