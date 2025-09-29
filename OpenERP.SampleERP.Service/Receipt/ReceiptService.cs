@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Receipt;
 
-public class ReceiptService(ISession session, IReceiptRepository repository, ILogger<ReceiptService> logger) : IReceiptService
+public class ReceiptService(ISession session, IReceiptRepository repository, ILogger<ReceiptService> logger) 
+    : ServiceBase(repository), IReceiptService
 {
     public Task<PaymentBundle> GetBundle(string key)
     {
@@ -28,7 +29,7 @@ public class ReceiptService(ISession session, IReceiptRepository repository, ILo
         }
     }
 
-    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    public bool Validate(PaymentBundle item)
     {
         throw new NotImplementedException();
     }
@@ -61,16 +62,6 @@ public class ReceiptService(ISession session, IReceiptRepository repository, ILo
             logger.LogError(ex, "Error in InvoiceService.Save");
             throw;
         }
-    }
-
-    public bool Validate(PaymentBundle item)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string[]> GetAllIds()
-    {
-        return repository.GetAllIdsAsync();
     }
 
     public void SetTrackingStatus(bool enabled)

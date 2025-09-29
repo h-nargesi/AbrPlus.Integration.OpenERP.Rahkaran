@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote;
 
-public class QuoteService(ISession session, IQuotationSlsRepository repository, ILogger<QuoteService> logger) : IQuoteService
+public class QuoteService(ISession session, IQuotationSlsRepository repository, ILogger<QuoteService> logger) 
+    : ServiceBase(repository), IQuoteService
 {
     public async Task<InvoiceBundle> GetBundle(string key)
     {
@@ -44,9 +45,9 @@ public class QuoteService(ISession session, IQuotationSlsRepository repository, 
         }
     }
 
-    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    public bool Validate(InvoiceBundle item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("Quotation validation is not supported in Rahkaran.");
     }
 
     public async Task<bool> Save(InvoiceBundle bundle)
@@ -91,15 +92,5 @@ public class QuoteService(ISession session, IQuotationSlsRepository repository, 
     public bool SyncWithCrmObjectTypeCode()
     {
         return false;
-    }
-
-    public Task<string[]> GetAllIds()
-    {
-        return repository.GetAllIdsAsync();
-    }
-
-    public bool Validate(InvoiceBundle item)
-    {
-        throw new NotSupportedException("Quotation validation is not supported in Rahkaran.");
     }
 }

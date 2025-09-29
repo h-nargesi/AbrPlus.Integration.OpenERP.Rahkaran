@@ -1,5 +1,4 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Repository;
-using Microsoft.Extensions.Logging;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Test;
 
@@ -19,6 +18,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -36,6 +39,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -51,6 +58,29 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
+    }
+
+    [Fact]
+    public async Task PartyRepository_GetLastChanges()
+    {
+        var repo = new PartyRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var ids = await repo.GetAllIdsAsync();
+        Assert.NotNull(ids);
+
+        var lastChange = await repo.GetMaxRowVersionAsync();
+        if (ids.Length > 0)
+        {
+            Assert.NotNull(lastChange);
+            Assert.True(lastChange.Length > 0);
+        }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -66,6 +96,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -81,6 +115,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -96,6 +134,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -111,6 +153,10 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 
     [Fact]
@@ -126,5 +172,9 @@ public class RepositoryTest : BaseServiceTest
             Assert.NotNull(lastChange);
             Assert.True(lastChange.Length > 0);
         }
+
+        var lastChangeIds = await repo.GetLastChangesAsync(new byte[8]);
+        Assert.NotNull(lastChangeIds);
+        Assert.Equal(ids.Length, lastChangeIds.Length);
     }
 }

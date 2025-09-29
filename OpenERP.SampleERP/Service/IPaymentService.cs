@@ -7,8 +7,8 @@ public interface IPaymentService
 {
     Task<string[]> GetAllIds();
     Task<PaymentBundle> GetBundle(string key);
-    ChangeInfo GetChanges(string lastTrackedVersionStamp);
+    bool Validate(PaymentBundle item);
     Task<bool> Save(PaymentBundle item);
     void SetTrackingStatus(bool enabled);
-    bool Validate(PaymentBundle item);
+    Task<ChangeInfo> GetChanges(string lastTrackedVersionStamp);
 }

@@ -1,6 +1,8 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.Enums;
 using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Customer;
 
-public class CustomerService(ISession session, IPartyRepository repository, ILogger<CustomerService> logger) : ICustomerService
+public class CustomerService(ISession session, IPartyRepository repository, ILogger<CustomerService> logger)
+    : ServiceBase(repository), ICustomerService
 {
     public async Task<IdentityBundle> GetBundle(string key)
     {
@@ -39,23 +42,19 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
         throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
     }
 
-    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    public decimal GetCustomerBalance(string customerCode)
     {
-        var currentTrackingVersion = repository.GetCurrentTrackingVersion();
+        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
+    }
 
-        if (long.TryParse(lastTrackedVersionStamp, out var lastTrackedVersion) &&
-            currentTrackingVersion == lastTrackedVersion)
-        {
-            return new ChangeInfo() { LastTrackedVersion = lastTrackedVersionStamp };
-        }
+    public List<IdentityBalance> GetAllIdentityBalance(IdentityBalanceParams identityBalanceParams)
+    {
+        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
+    }
 
-        var toReturn = new ChangeInfo() { LastTrackedVersion = currentTrackingVersion.ToString() };
-
-        //ToDo : add changes to toReturn.Changes
-
-        throw new NotImplementedException();
-
-        //return toReturn;
+    public bool Validate(IdentityBundle item)
+    {
+        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
     }
 
     public async Task<bool> Save(IdentityBundle bundle)
@@ -83,16 +82,6 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
         }
     }
 
-    public bool Validate(IdentityBundle item)
-    {
-        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
-    }
-
-    public Task<string[]> GetAllIds()
-    {
-        return repository.GetAllIdsAsync();
-    }
-
     public void SetTrackingStatus(bool enabled)
     {
         if (enabled)
@@ -103,15 +92,5 @@ public class CustomerService(ISession session, IPartyRepository repository, ILog
         {
             repository.DisableTableTracking();
         }
-    }
-
-    public decimal GetCustomerBalance(string customerCode)
-    {
-        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
-    }
-
-    public List<IdentityBalance> GetAllIdentityBalance(IdentityBalanceParams identityBalanceParams)
-    {
-        throw new NotSupportedException("Identity lookup via code is not supported in Rahkaran.");
     }
 }

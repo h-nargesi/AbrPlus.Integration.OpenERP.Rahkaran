@@ -1,6 +1,7 @@
 ﻿using AbrPlus.Integration.OpenERP.SampleERP.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,5 +21,13 @@ public class ReceiptRepository(IRahkaranDbContext dbContext, ILoggerFactory logg
             .OrderByDescending(x => x.Version)
             .Select(x => x.Version)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<long[]> GetLastChangesAsync(byte[] timestamp)
+    {
+        return await _context.Receipt
+            .Where(x => StructuralComparisons.StructuralComparer.Compare(x.Version, timestamp) > 0)
+            .Select(x => x.ReceiptId)
+            .ToArrayAsync();
     }
 }

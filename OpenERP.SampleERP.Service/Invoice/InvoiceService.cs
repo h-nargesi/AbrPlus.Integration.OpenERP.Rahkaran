@@ -1,14 +1,17 @@
 ﻿using AbrPlus.Integration.OpenERP.Api.DataContracts;
+using AbrPlus.Integration.OpenERP.Enums;
 using AbrPlus.Integration.OpenERP.SampleERP.Repository;
 using AbrPlus.Integration.OpenERP.SampleERP.Service.SessionManagement;
+using AbrPlus.Integration.OpenERP.SampleERP.Shared;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
 public class InvoiceService(ISession session, IInvoiceRmsRepository repository, ILogger<InvoiceService> logger)
-    : IInvoiceService
+    : ServiceBase(repository), IInvoiceService
 {
     public async Task<InvoiceBundle> GetBundle(string key)
     {
@@ -45,9 +48,9 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
         }
     }
 
-    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    public bool Validate(InvoiceBundle item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("Invoice validation is not supported in Rahkaran.");
     }
 
     public async Task<bool> Save(InvoiceBundle bundle)
@@ -84,16 +87,6 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
         }
     }
 
-    public bool Validate(InvoiceBundle item)
-    {
-        throw new NotSupportedException("Invoice validation is not supported in Rahkaran.");
-    }
-
-    public Task<string[]> GetAllIds()
-    {
-        return repository.GetAllIdsAsync();
-    }
-
     public void SetTrackingStatus(bool enabled)
     {
         throw new NotImplementedException();
@@ -103,4 +96,5 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
     {
         throw new NotImplementedException();
     }
+
 }

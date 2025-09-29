@@ -1,4 +1,7 @@
-﻿namespace AbrPlus.Integration.OpenERP.SampleERP.Shared;
+﻿using System;
+using System.Linq;
+
+namespace AbrPlus.Integration.OpenERP.SampleERP.Shared;
 
 public static class TimestampUtility
 {
@@ -7,14 +10,24 @@ public static class TimestampUtility
         return timestamp.TimestampToLong().ToString();
     }
 
-    public static long TimestampToLong(this byte[] timestamp)
+    public static ulong TimestampToLong(this byte[] timestamp)
     {
-        long value = 0;
+        return BitConverter.ToUInt64([.. timestamp.Reverse()], 0);
+    }
 
-        foreach (var part in timestamp)
+    public static byte[]  ToTimestamp(this string timestamp)
+    {
+        return ulong.Parse(timestamp).ToTimestamp();
+    }
+
+    public static byte[] ToTimestamp(this ulong timestamp)
+    {
+        var value = new byte[8];
+
+        for (var i = 7; i >= 0; i--)
         {
-            value <<= 8;
-            value |= part;
+            value[i] = (byte)(timestamp & 0xFF);
+            timestamp >>= 8;
         }
 
         return value;

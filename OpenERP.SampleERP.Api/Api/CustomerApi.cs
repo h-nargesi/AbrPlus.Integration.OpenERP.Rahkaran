@@ -26,7 +26,7 @@ public class CustomerApi(ICustomerService customerService) : ICustomerApi, IApi
     }
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
     {
-        return customerService.GetChanges(lastTrackedVersion);
+        return customerService.GetChanges(lastTrackedVersion).Result;
     }
     public decimal GetCustomerBalance(string customerCode, int companyId)
     {

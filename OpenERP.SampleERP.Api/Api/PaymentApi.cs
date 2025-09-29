@@ -17,7 +17,7 @@ public class PaymentApi(IPaymentService paymentService) : IPaymentApi, IApi
     }
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
     {
-        return paymentService.GetChanges(lastTrackedVersion);
+        return paymentService.GetChanges(lastTrackedVersion).Result;
     }
     public bool Save(PaymentBundle item, int? companyId)
     {

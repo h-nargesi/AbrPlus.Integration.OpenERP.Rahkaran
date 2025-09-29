@@ -17,7 +17,7 @@ public class ReceiptApi(IReceiptService receiptService) : IReceiptApi, IApi
     }
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
     {
-        return receiptService.GetChanges(lastTrackedVersion);
+        return receiptService.GetChanges(lastTrackedVersion).Result;
     }
     public bool Save(PaymentBundle item, int? companyId)
     {

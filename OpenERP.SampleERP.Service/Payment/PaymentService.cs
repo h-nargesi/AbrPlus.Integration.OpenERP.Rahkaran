@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Payment;
 
-public class PaymentService(ISession session, IPaymentRepository repository, ILogger<PaymentService> logger) : IPaymentService
+public class PaymentService(ISession session, IPaymentRepository repository, ILogger<PaymentService> logger) 
+    : ServiceBase(repository), IPaymentService
 {
     public Task<PaymentBundle> GetBundle(string key)
     {
@@ -28,9 +29,9 @@ public class PaymentService(ISession session, IPaymentRepository repository, ILo
         }
     }
 
-    public ChangeInfo GetChanges(string lastTrackedVersionStamp)
+    public bool Validate(PaymentBundle item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public async Task<bool> Save(PaymentBundle bundle)
@@ -58,16 +59,6 @@ public class PaymentService(ISession session, IPaymentRepository repository, ILo
             logger.LogError(ex, "Error in InvoiceService.Save");
             throw;
         }
-    }
-
-    public bool Validate(PaymentBundle item)
-    {
-        throw new NotSupportedException();
-    }
-
-    public Task<string[]> GetAllIds()
-    {
-        return repository.GetAllIdsAsync();
     }
 
     public void SetTrackingStatus(bool enabled)

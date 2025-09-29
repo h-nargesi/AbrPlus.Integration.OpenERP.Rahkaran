@@ -7,9 +7,9 @@ public interface IInvoiceService
 {
     Task<string[]> GetAllIds();
     Task<InvoiceBundle> GetBundle(string key);
-    ChangeInfo GetChanges(string lastTrackedVersionStamp);
+    bool Validate(InvoiceBundle item);
     Task<bool> Save(InvoiceBundle invoice);
     void SetTrackingStatus(bool enabled);
     bool SyncWithCrmObjectTypeCode();
-    bool Validate(InvoiceBundle item);
+    Task<ChangeInfo> GetChanges(string lastTrackedVersionStamp);
 }

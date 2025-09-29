@@ -19,7 +19,7 @@ public class InvoiceApi(IInvoiceService invoiceService) : IInvoiceApi, IApi
 
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
     {
-        return invoiceService.GetChanges(lastTrackedVersion);
+        return invoiceService.GetChanges(lastTrackedVersion).Result;
     }
 
     public bool Save(InvoiceBundle item, int? companyId)

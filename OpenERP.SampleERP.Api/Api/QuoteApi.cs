@@ -17,7 +17,7 @@ public class QuoteApi(IQuoteService quoteService) : IQuoteApi, IApi
     }
     public ChangeInfo GetChanges(string lastTrackedVersion, int? companyId)
     {
-        return quoteService.GetChanges(lastTrackedVersion);
+        return quoteService.GetChanges(lastTrackedVersion).Result;
     }
     public bool Save(InvoiceBundle item, int? companyId)
     {
