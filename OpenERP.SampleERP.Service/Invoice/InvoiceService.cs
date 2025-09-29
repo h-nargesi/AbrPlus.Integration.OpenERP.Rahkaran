@@ -22,9 +22,21 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
 
             var service = session.GetWebService<IInvoiceRmsWebService>(IInvoiceRmsWebService.BasePath);
 
-            var dto = await session.TryCall((token) => service.GetInvoiceById(id, token.Cookie));
+            var response = await session.TryCall((token) => service.GetInvoiceById(id, token.Cookie));
 
-            return dto.GetInvoiceByIdResult.ToBundle(null);
+            if (response.Metadata?.ErrorMessage?.Length > 0)
+            {
+                // TODO use custom exception
+                throw new Exception(response.Metadata?.ErrorMessage);
+            }
+
+            if (response?.Metadata?.StackTrace?.Length > 0)
+            {
+                var trace = response.Metadata.StackTrace;
+                logger.LogError("Error in InvoiceService.Save\n{trace}", trace);
+            }
+
+            return response.Result.ToBundle(null);
         }
         catch (Exception ex)
         {
@@ -49,21 +61,21 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
                 document = bundle.ToDto()
             };
 
-            var result = await session.TryCall((token) => service.SaveInvoice(data, token.Cookie));
+            var response = await session.TryCall((token) => service.SaveInvoice(data, token.Cookie));
 
-            if (result.Metadata?.ErrorMessage?.Length > 0)
+            if (response.Metadata?.ErrorMessage?.Length > 0)
             {
                 // TODO use custom exception
-                throw new Exception(result.Metadata?.ErrorMessage);
+                throw new Exception(response.Metadata?.ErrorMessage);
             }
 
-            if (result?.Metadata?.StackTrace?.Length > 0)
+            if (response?.Metadata?.StackTrace?.Length > 0)
             {
-                var trace = result.Metadata.StackTrace;
+                var trace = response.Metadata.StackTrace;
                 logger.LogError("Error in InvoiceService.Save\n{trace}", trace);
             }
 
-            return result.Result != null;
+            return response.Result != null;
         }
         catch (Exception ex)
         {
