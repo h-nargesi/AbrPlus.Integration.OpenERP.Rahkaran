@@ -2,17 +2,15 @@
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Quote;
 
-public class QuoteSaveDocument
+public class QuoteDtoRmsResponse
 {
-    public QuoteDto document { get; set; }
+    public QuoteDto Result { get; set; }
+    public Metadata Metadata { get; set; }
 }
 
-public class GetQuotesResponse
+public class Metadata
 {
-    public QuoteDto GetQuoteByIdResult { get; set; }
-}
-
-public class SaveQuoteResponse
-{
-    public object SaveQuoteResult { get; set; }
+    public bool IsSuccessfull { get; set; }
+    public string ErrorMessage { get; set; }
+    public string StackTrace { get; set; }
 }

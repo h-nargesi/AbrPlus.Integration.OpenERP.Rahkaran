@@ -33,7 +33,7 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
             if (response?.Metadata?.StackTrace?.Length > 0)
             {
                 var trace = response.Metadata.StackTrace;
-                logger.LogError("Error in InvoiceService.Save\n{trace}", trace);
+                logger.LogError("Error in InvoiceService.GetBundle\n{trace}", trace);
             }
 
             return response.Result.ToBundle(null);
@@ -86,7 +86,7 @@ public class InvoiceService(ISession session, IInvoiceRmsRepository repository, 
 
     public bool Validate(InvoiceBundle item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("Invoice validation is not supported in Rahkaran.");
     }
 
     public Task<string[]> GetAllIds()
