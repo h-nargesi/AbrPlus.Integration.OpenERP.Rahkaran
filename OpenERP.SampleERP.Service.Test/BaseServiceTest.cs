@@ -30,7 +30,7 @@ public abstract class BaseServiceTest
             {
                 Value = new ConnectionStringOption
                 {
-                    ConnectionString = "Data Source=MISVDIDB6\\SQL2022;Initial Catalog=Pakshuma;Integrated Security=False;User ID=sa;Password=abc.123456;Encrypt=False;",
+                    ConnectionString = Utility.ConnectionString,
                 }
             });
         
@@ -47,7 +47,7 @@ public abstract class BaseServiceTest
         return new Session(tokenService, Company.Object);
     }
 
-    protected TRepo? GenerateRepository<TRepo, T>() where TRepo : BaseRahkaranRepository<T> where T : BaseEntity
+    protected TRepo? GenerateRepository<TRepo>() where TRepo : class
     {
         return Activator.CreateInstance(
             typeof(TRepo),

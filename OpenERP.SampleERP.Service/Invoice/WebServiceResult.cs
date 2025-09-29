@@ -9,5 +9,13 @@ public class GetInvoicesResponse
 
 public class SaveInvoiceResponse
 {
-    public object SaveInvoiceResult { get; set; }
+    public InvoiceRmsDto Result { get; set; }
+    public Metadata Metadata { get; set; }
+}
+
+public class Metadata
+{
+    public bool IsSuccessfull { get; set; }
+    public string ErrorMessage { get; set; }
+    public string StackTrace { get; set; }
 }

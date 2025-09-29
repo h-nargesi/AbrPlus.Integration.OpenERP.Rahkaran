@@ -8,7 +8,7 @@ public class RepositoryTest : BaseServiceTest
     [Fact]
     public async Task InvoiceRMS3Repository_GetAllIds_RowVersion()
     {
-        var repo = new InvoiceRms3Repository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
+        var repo = new InvoiceRmsRepository(new RahkaranDbContext(Company.Object, LoggerFactory), LoggerFactory);
 
         var ids = await repo.GetAllIdsAsync();
         Assert.NotNull(ids);

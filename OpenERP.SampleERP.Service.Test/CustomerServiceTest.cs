@@ -43,7 +43,7 @@ public class CustomerServiceTest : BaseServiceTest
 
         Assert.True(saveResult);
 
-        var webService = RestService.For<IPartyWebService>(Company.Object.GetCompanyConfig().BaseUrl + CustomerService.BasePath);
+        var webService = RestService.For<IPartyWebService>(Company.Object.GetCompanyConfig().BaseUrl + IPartyWebService.BasePath);
         var data = new { firstName = identity.FirstName, lastName = identity.LastName };
         var savedDto = (await session.TryCall((token) => webService.FetchParty(data, token.Cookie)))?.FetchPartyResult;
 

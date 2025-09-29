@@ -10,7 +10,7 @@ public partial class RahkaranDbContext(IRahkaranCompanyService company, ILoggerF
     BaseSqlServerDbContext<RahkaranDbContext>(company.GetConnectionStringOption(), loggerFactory),
     IRahkaranDbContext
 {
-    public virtual DbSet<InvoiceRms3> InvoiceRms3 { get; set; }
+    public virtual DbSet<InvoiceRms3> InvoiceRms { get; set; }
 
     public virtual DbSet<InvoiceSls3> InvoiceSls3 { get; set; }
 

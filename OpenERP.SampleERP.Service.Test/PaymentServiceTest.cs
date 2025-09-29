@@ -12,7 +12,7 @@ public class PaymentServiceTest : BaseServiceTest
     {
         using var session = GetSession(out _);
         var service = new PaymentService(session, 
-            GenerateRepository<PaymentRepository, Payment>(), 
+            GenerateRepository<PaymentRepository>(), 
             Utility.GetLogger<PaymentService>());
 
         var payment = new PaymentDto

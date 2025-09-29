@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
-public class InvoiceService(ISession session, IInvoiceSLS3Repository repository, ILogger<InvoiceService> logger)
+public class InvoiceService(ISession session, IInvoiceRmsRepository repository, ILogger<InvoiceService> logger)
     : IInvoiceService
 {
     public async Task<InvoiceBundle> GetBundle(string key)
@@ -20,7 +20,7 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
                 throw new Exception($"Invalid Invoice Key: {key}");
             }
 
-            var service = session.GetWebService<IInvoiceWebService>(IInvoiceWebService.BasePathRms);
+            var service = session.GetWebService<IInvoiceRmsWebService>(IInvoiceRmsWebService.BasePath);
 
             var dto = await session.TryCall((token) => service.GetInvoiceById(id, token.Cookie));
 
@@ -42,7 +42,7 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
     {
         try
         {
-            var service = session.GetWebService<IInvoiceWebService>(IInvoiceWebService.BasePathRms);
+            var service = session.GetWebService<IInvoiceRmsWebService>(IInvoiceRmsWebService.BasePath);
 
             var data = new
             {
@@ -51,15 +51,19 @@ public class InvoiceService(ISession session, IInvoiceSLS3Repository repository,
 
             var result = await session.TryCall((token) => service.SaveInvoice(data, token.Cookie));
 
-            //var messages = result?.FirstOrDefault()?.ValidationErrors;
+            if (result.Metadata?.ErrorMessage?.Length > 0)
+            {
+                // TODO use custom exception
+                throw new Exception(result.Metadata?.ErrorMessage);
+            }
 
-            //if (messages?.Length > 0)
-            //{
-            //    // TODO use custom exception
-            //    throw new Exception(string.Join('\n', messages));
-            //}
+            if (result?.Metadata?.StackTrace?.Length > 0)
+            {
+                var trace = result.Metadata.StackTrace;
+                logger.LogError("Error in InvoiceService.Save\n{trace}", trace);
+            }
 
-            return true;
+            return result.Result != null;
         }
         catch (Exception ex)
         {

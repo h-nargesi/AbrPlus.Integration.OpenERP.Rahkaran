@@ -107,7 +107,7 @@ public class SessionTest
         };
 
         return ApiException.Create(
-            new HttpRequestMessage(HttpMethod.Post, "https://localhost"),
+            new HttpRequestMessage(HttpMethod.Post, Utility.RahkaranBaseUrl),
             HttpMethod.Post,
             response,
             new RefitSettings()).Result;

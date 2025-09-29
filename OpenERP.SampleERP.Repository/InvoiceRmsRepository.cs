@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Repository;
 
-public class InvoiceRms3Repository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
-    BaseRahkaranRepository<InvoiceRms3>(dbContext, loggerFactory), IInvoiceRMS3Repository
+public class InvoiceRmsRepository(IRahkaranDbContext dbContext, ILoggerFactory loggerFactory) :
+    BaseRahkaranRepository<InvoiceRms3>(dbContext, loggerFactory), IInvoiceRmsRepository
 {
     public Task<string[]> GetAllIdsAsync()
     {
-        return _context.InvoiceRms3.Select(i => i.InvoiceId.ToString()).ToArrayAsync();
+        return _context.InvoiceRms.Select(i => i.InvoiceId.ToString()).ToArrayAsync();
     }
 
     public async Task<byte[]> GetMaxRowVersionAsync()
     {
-        return await _context.InvoiceRms3
+        return await _context.InvoiceRms
             .OrderByDescending(x => x.Version)
             .Select(x => x.Version)
             .FirstOrDefaultAsync();

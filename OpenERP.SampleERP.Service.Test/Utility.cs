@@ -7,6 +7,7 @@ internal static class Utility
     public const string RahkaranBaseUrl = "http://localhost:2005";
     public const string RahkaranUsername = "admin";
     public const string RahkaranPassword = "admin";
+    public const string ConnectionString = "Data Source=MISVDIDB6\\SQL2022;Initial Catalog=Pakshuma;Integrated Security=False;User ID=sa;Password=abc.123456;Encrypt=False;";
 
     public static ILogger<T> GetLogger<T>()
     {

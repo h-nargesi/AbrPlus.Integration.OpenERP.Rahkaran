@@ -5,7 +5,7 @@ using System;
 
 namespace AbrPlus.Integration.OpenERP.SampleERP.Service.Invoice;
 
-internal static class InvoiceExtension
+public static class InvoiceExtension
 {
     public static InvoiceBundle ToBundle(this InvoiceRmsDto dto, IdentityBundle identity)
     {
